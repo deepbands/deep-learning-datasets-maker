@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/plugins/split_rs_data" >
+        <file>icon.png</file>
+    </qresource>
+</RCC>
