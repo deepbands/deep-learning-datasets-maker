@@ -28,4 +28,5 @@ git clone git@github.com:deepbands/deep-learning-datasets-maker.git
 ## TODO
 
 - [ ] Fix: If vector layer saved in memory not in file, `rasterize` can't work.
+- [X] Fix: Splitiing Image Size.
 
