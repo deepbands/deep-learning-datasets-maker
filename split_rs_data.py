@@ -187,10 +187,12 @@ class SplitRSData:
         filenameVR, _filter = QFileDialog.getSaveFileName(self.dlg, "Select Output Rasterized File","",'*.tif')
         self.dlg.lineEditV_R.setText(filenameVR)
     def select_output_images(self):
-        filenameIM, _filter = QFileDialog.getSaveFileName(self.dlg, "Select Output Images Files","",'*.jpg')
+        # filenameIM, _filter = QFileDialog.getSaveFileName(self.dlg, "Select Output Images Files","",'*.jpg') 
+        filenameIM = QFileDialog.getExistingDirectory(self.dlg, 'Select Empty Folder For Images')
         self.dlg.lineEditImages.setText(filenameIM)
     def select_output_labels(self):
-        filenameLB, _filter = QFileDialog.getSaveFileName(self.dlg, "Select Output Labels Files","",'*.png')
+        # filenameLB, _filter = QFileDialog.getSaveFileName(self.dlg, "Select Output Labels Files","",'*.png')
+        filenameLB = QFileDialog.getExistingDirectory(self.dlg, 'Select Empty Folder For Labels')
         self.dlg.lineEditLabels.setText(filenameLB)
 
     def run(self):
