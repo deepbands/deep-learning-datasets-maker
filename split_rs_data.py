@@ -209,6 +209,7 @@ class SplitRSData:
         # Populate the comboBox with names of all the loaded layers
         self.dlg.mMapLayerComboBoxR.setFilters(QgsMapLayerProxyModel.RasterLayer)
         self.dlg.mMapLayerComboBoxV.setFilters(QgsMapLayerProxyModel.PolygonLayer)
+        self.dlg.comboBoxImgSize.clear()
         self.dlg.comboBoxImgSize.addItems(["64", "128", "256", "512", "1024"])
         self.dlg.comboBoxImgSize.setCurrentIndex(3)
 
