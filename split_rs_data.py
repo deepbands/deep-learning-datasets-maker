@@ -24,7 +24,7 @@
 from qgis.PyQt.QtCore import QSettings, QTranslator, QCoreApplication
 from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtWidgets import QAction, QFileDialog
-from qgis.core import (QgsMapLayerProxyModel, QgsProject, QgsProcessingFeedback, QgsMessageLog)
+from qgis.core import (QgsMapLayerProxyModel, QgsProject, QgsProcessingFeedback, QgsMessageLog, Qgis)
 # import processing, tempfile
 import math
 import os.path as osp
@@ -289,6 +289,7 @@ class SplitRSData:
                 # lyr.DeleteField(yy) # delete field
                 vec_ds = None
             rasterize(fn_ras, fn_vec, output)
+            iface.messageBar().pushMessage("You will find the rasterized file in " + output, level=Qgis.Info, duration=5)
             iface.addRasterLayer(output, "0 1 class")
 
             # Start Splitting 
@@ -354,3 +355,4 @@ class SplitRSData:
             gggg = fn_ras.dataProvider().dataSourceUri()
             mygridfun(gggg, image_folder_path, "jpg", "JPEG", "", 512, 512, currentrasterlay)
             mygridfun(output, label_folder_path, "png", "PNG", "", 512, 512, currentvectorlay)
+            iface.messageBar().pushMessage("You will find the dataset in " + image_folder_path, level=Qgis.Success, duration=5)
