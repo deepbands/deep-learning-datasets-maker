@@ -185,17 +185,17 @@ class SplitRSData:
                 action)
             self.iface.removeToolBarIcon(action)
 
-    def select_output_rasterize(self):
-        filenameVR, _filter = QFileDialog.getSaveFileName(self.dlg, "Select Output Rasterized File","",'*.tif')
-        self.dlg.lineEditV_R.setText(filenameVR)
-    def select_output_images(self):
-        # filenameIM, _filter = QFileDialog.getSaveFileName(self.dlg, "Select Output Images Files","",'*.jpg') 
-        filenameIM = QFileDialog.getExistingDirectory(self.dlg, 'Select Empty Folder For Images')
-        self.dlg.lineEditImages.setText(filenameIM)
-    def select_output_labels(self):
-        # filenameLB, _filter = QFileDialog.getSaveFileName(self.dlg, "Select Output Labels Files","",'*.png')
-        filenameLB = QFileDialog.getExistingDirectory(self.dlg, 'Select Empty Folder For Labels')
-        self.dlg.lineEditLabels.setText(filenameLB)
+    # def select_output_rasterize(self):
+    #     filenameVR, _filter = QFileDialog.getSaveFileName(self.dlg, "Select Output Rasterized File","",'*.tif')
+    #     self.dlg.lineEditV_R.setText(filenameVR)
+    # def select_output_images(self):
+    #     # filenameIM, _filter = QFileDialog.getSaveFileName(self.dlg, "Select Output Images Files","",'*.jpg') 
+    #     filenameIM = QFileDialog.getExistingDirectory(self.dlg, 'Select Empty Folder For Images')
+    #     self.dlg.lineEditImages.setText(filenameIM)
+    # def select_output_labels(self):
+    #     # filenameLB, _filter = QFileDialog.getSaveFileName(self.dlg, "Select Output Labels Files","",'*.png')
+    #     filenameLB = QFileDialog.getExistingDirectory(self.dlg, 'Select Empty Folder For Labels')
+    #     self.dlg.lineEditLabels.setText(filenameLB)
 
     def run(self):
         """Run method that performs all the real work"""
@@ -205,11 +205,18 @@ class SplitRSData:
         if self.first_start == True:
             self.first_start = False
             self.dlg = SplitRSDataDialog()
-            self.dlg.pushButtonVR.clicked.connect(self.select_output_rasterize)
-            self.dlg.pushButtonImg.clicked.connect(self.select_output_images)
-            self.dlg.pushButtonLabl.clicked.connect(self.select_output_labels)
+            # self.dlg.pushButtonVR.clicked.connect(self.select_output_rasterize)
+            # self.dlg.pushButtonImg.clicked.connect(self.select_output_images)
+            # self.dlg.pushButtonLabl.clicked.connect(self.select_output_labels)
         
         # Fetch the currently loaded layers
+        # Set filewidget
+        self.dlg.mQfwRasterized.setFilter("*.tif")
+        self.dlg.mQfwRasterized.setDialogTitle("Select Output Rasterized File")
+        self.dlg.mQfwImages.setDialogTitle("Select Output Images Files")
+        self.dlg.mQfwImages.setFilePath("[Select Empty Folder]")
+        self.dlg.mQfwLabels.setDialogTitle("Select Output Labels Files")
+        self.dlg.mQfwLabels.setFilePath("[Select Empty Folder]")
         # Populate the comboBox with names of all the loaded layers
         self.dlg.mMapLayerComboBoxR.setFilters(QgsMapLayerProxyModel.RasterLayer)
         self.dlg.mMapLayerComboBoxV.setFilters(QgsMapLayerProxyModel.PolygonLayer)
@@ -223,26 +230,34 @@ class SplitRSData:
         result = self.dlg.exec_()
         # See if OK was pressed
         if result:
-            currentrasterlay = self.dlg.mMapLayerComboBoxR.currentText() # Get the selected raster layer
+            currentrasterlay = self.dlg.mMapLayerComboBoxR.currentText()  # Get the selected raster layer
             rlayers = QgsProject.instance().mapLayersByName(currentrasterlay)
             fn_ras = rlayers[0]
-            currentvectorlay = self.dlg.mMapLayerComboBoxV.currentText() # Get the selected raster layer
+            currentvectorlay = self.dlg.mMapLayerComboBoxV.currentText()  # Get the selected raster layer
             vlayers = QgsProject.instance().mapLayersByName(currentvectorlay)
             fn_vec = vlayers[0]
             # ttt = (tempfile.NamedTemporaryFile(suffix='.shp'))
-            output = str(self.dlg.lineEditV_R.text())
+            # output = str(self.dlg.lineEditV_R.text())
+            output = str(self.dlg.mQfwRasterized.filePath())
 
             # Log for files
+            ras_path = str(fn_ras.dataProvider().dataSourceUri())
+            vec_path = str(fn_vec.dataProvider().dataSourceUri())
+
             feedback = QgsProcessingFeedback()
-            feedback.pushInfo(str(fn_ras.dataProvider().dataSourceUri()))
-            feedback.pushInfo(str(fn_vec.dataProvider().dataSourceUri()))
+            feedback.pushInfo(ras_path)
+            feedback.pushInfo(vec_path)
             feedback.pushInfo(output)
 
+            # import os.path as ops
+            # print(ops.exists(vec_path))
+
             # iface.messageBar().pushMessage(output, level=Qgis.Critical)
-            def rasterize(fn_ras, fn_vec, output):
+            # TODO: if shp in memory, it can't work
+            def rasterize(ras_path, vec_path, output):
                 driver = ogr.GetDriverByName("ESRI Shapefile")
-                ras_ds = gdal.Open(fn_ras.dataProvider().dataSourceUri())
-                vec_ds = driver.Open(fn_vec.dataProvider().dataSourceUri(), 1)
+                ras_ds = gdal.Open(ras_path)
+                vec_ds = driver.Open(vec_path, 1)
 
                 lyr = vec_ds.GetLayer()
                 geot = ras_ds.GetGeoTransform()
@@ -288,7 +303,8 @@ class SplitRSData:
                 chn_ras_ds = None
                 # lyr.DeleteField(yy) # delete field
                 vec_ds = None
-            rasterize(fn_ras, fn_vec, output)
+            
+            rasterize(ras_path, vec_path, output)
             iface.messageBar().pushMessage("You will find the rasterized file in " + output, level=Qgis.Info, duration=5)
             iface.addRasterLayer(output, "0 1 class")
 
@@ -349,9 +365,11 @@ class SplitRSData:
 
             # feedback.pushInfo(str(fn_ras.dataProvider().dataSourceUri()))
             # feedback.pushInfo(str(fn_vec.dataProvider().dataSourceUri()))
-            #do it 
-            image_folder_path = str(self.dlg.lineEditImages.text())
-            label_folder_path = str(self.dlg.lineEditLabels.text())
+            # do it 
+            # image_folder_path = str(self.dlg.lineEditImages.text())
+            # label_folder_path = str(self.dlg.lineEditLabels.text())
+            image_folder_path = str(self.dlg.mQfwImages.filePath())
+            label_folder_path = str(self.dlg.mQfwLabels.filePath())
             gggg = fn_ras.dataProvider().dataSourceUri()
             mygridfun(gggg, image_folder_path, "jpg", "JPEG", "", 512, 512, currentrasterlay)
             mygridfun(output, label_folder_path, "png", "PNG", "", 512, 512, currentvectorlay)

@@ -207,37 +207,9 @@
         </widget>
        </item>
        <item>
-        <widget class="QLineEdit" name="lineEditV_R">
-         <property name="minimumSize">
-          <size>
-           <width>100</width>
-           <height>0</height>
-          </size>
-         </property>
-         <property name="maximumSize">
-          <size>
-           <width>100</width>
-           <height>16777215</height>
-          </size>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="pushButtonVR">
-         <property name="minimumSize">
-          <size>
-           <width>124</width>
-           <height>0</height>
-          </size>
-         </property>
-         <property name="maximumSize">
-          <size>
-           <width>124</width>
-           <height>16777215</height>
-          </size>
-         </property>
-         <property name="text">
-          <string>Rasterized ...</string>
+        <widget class="QgsFileWidget" name="mQfwRasterized">
+         <property name="storageMode">
+          <enum>QgsFileWidget::SaveFile</enum>
          </property>
         </widget>
        </item>
@@ -247,31 +219,27 @@
       <layout class="QHBoxLayout" name="horizontalLayout_5">
        <item>
         <widget class="QLabel" name="label_5">
+         <property name="minimumSize">
+          <size>
+           <width>176</width>
+           <height>0</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>176</width>
+           <height>16777215</height>
+          </size>
+         </property>
          <property name="text">
           <string>Output Images Location</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QLineEdit" name="lineEditImages">
-         <property name="minimumSize">
-          <size>
-           <width>100</width>
-           <height>0</height>
-          </size>
-         </property>
-         <property name="maximumSize">
-          <size>
-           <width>100</width>
-           <height>16777215</height>
-          </size>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="pushButtonImg">
-         <property name="text">
-          <string>Images ...</string>
+        <widget class="QgsFileWidget" name="mQfwImages">
+         <property name="storageMode">
+          <enum>QgsFileWidget::GetDirectory</enum>
          </property>
         </widget>
        </item>
@@ -281,31 +249,27 @@
       <layout class="QHBoxLayout" name="horizontalLayout_6">
        <item>
         <widget class="QLabel" name="label_4">
+         <property name="minimumSize">
+          <size>
+           <width>176</width>
+           <height>0</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>176</width>
+           <height>16777215</height>
+          </size>
+         </property>
          <property name="text">
           <string>Output Labels Location</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QLineEdit" name="lineEditLabels">
-         <property name="minimumSize">
-          <size>
-           <width>100</width>
-           <height>0</height>
-          </size>
-         </property>
-         <property name="maximumSize">
-          <size>
-           <width>100</width>
-           <height>16777215</height>
-          </size>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="pushButtonLabl">
-         <property name="text">
-          <string>Labels ...</string>
+        <widget class="QgsFileWidget" name="mQfwLabels">
+         <property name="storageMode">
+          <enum>QgsFileWidget::GetDirectory</enum>
          </property>
         </widget>
        </item>
@@ -326,6 +290,11 @@
   </layout>
  </widget>
  <customwidgets>
+  <customwidget>
+   <class>QgsFileWidget</class>
+   <extends>QWidget</extends>
+   <header>qgsfilewidget.h</header>
+  </customwidget>
   <customwidget>
    <class>QgsMapLayerComboBox</class>
    <extends>QComboBox</extends>
