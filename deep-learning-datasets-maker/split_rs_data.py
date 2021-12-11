@@ -21,6 +21,7 @@
  *                                                                         *
  ***************************************************************************/
 """
+from numpy import double
 from qgis.PyQt.QtCore import QSettings, QTranslator, QCoreApplication
 from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtWidgets import QAction, QFileDialog
@@ -34,9 +35,7 @@ from .split_rs_data_dialog import SplitRSDataDialog
 import os.path
 from qgis.utils import iface
 import os
-import argparse
 import os.path as osp
-from tqdm import tqdm
 from .utils import *
 
 
@@ -207,11 +206,34 @@ class SplitRSData:
                            2 unchecked
             """
             if state == 2:
-                self.dlg.mQfwLabels_InSeg.setHidden(False)
-                self.dlg.label_7.setHidden(False)
+                self.dlg.mQfwLabels_InSeg.setEnabled(True) #We also can use .setHidden(False)
+                self.dlg.label_7.setEnabled(True)
             else : 
-                self.dlg.mQfwLabels_InSeg.setHidden(True)
-                self.dlg.label_7.setHidden(True)
+                self.dlg.mQfwLabels_InSeg.setEnabled(False)
+                self.dlg.label_7.setEnabled(False)
+    def state_changed_paddle(self, state):
+            if state == 2:
+                self.dlg.mOpacityWidget_Training.setEnabled(True)
+                self.dlg.mOpacityWidget_Validating.setEnabled(True)
+                self.dlg.label_8.setEnabled(True)
+                self.dlg.label_9.setEnabled(True)
+                self.dlg.label_10.setEnabled(True)
+            else :
+                self.dlg.mOpacityWidget_Training.setEnabled(False)
+                self.dlg.mOpacityWidget_Validating.setEnabled(False)
+                self.dlg.label_8.setEnabled(False)
+                self.dlg.label_9.setEnabled(False)
+                self.dlg.label_10.setEnabled(False)
+    
+    def state_changed_training(self, state):
+            # testing_set = 1.0 - (double(self.dlg.mOpacityWidget_Training.opacity()) + double(self.dlg.mOpacityWidget_Validating.opacity()))
+            Training_Set = self.dlg.mOpacityWidget_Training.opacity()
+            Val_Set =  self.dlg.mOpacityWidget_Validating.opacity()
+            Testing_Set = self.dlg.mOpacityWidget_Testing.opacity()
+            if Testing_Set == 0:
+                self.dlg.mOpacityWidget_Validating.setOpacity(1.0 - Training_Set)
+            self.dlg.mOpacityWidget_Testing.setOpacity(1.0 - (Training_Set+Val_Set))
+
 
     def run(self):
         """Run method that performs all the real work"""
@@ -221,8 +243,8 @@ class SplitRSData:
         if self.first_start == True:
             self.first_start = False
             self.dlg = SplitRSDataDialog()
-            if not self.dlg.isVisible():
-                self.dlg.show()
+            # if not self.dlg.isVisible():
+            #     self.dlg.show()
             # self.dlg.pushButtonVR.clicked.connect(self.select_output_rasterize)
             # self.dlg.pushButtonImg.clicked.connect(self.select_output_images)
             # self.dlg.pushButtonLabl.clicked.connect(self.select_output_labels)
@@ -245,7 +267,11 @@ class SplitRSData:
         self.dlg.comboBoxImgSize.addItems(["64", "128", "256", "512", "1024"])
         self.dlg.comboBoxImgSize.setCurrentIndex(3)
         self.dlg.checkBoxInSeg.setChecked(True)
+        self.dlg.checkBoxPaddle.setChecked(True)
         self.dlg.checkBoxInSeg.stateChanged.connect(self.state_changed)
+        self.dlg.checkBoxPaddle.stateChanged.connect(self.state_changed_paddle)
+        self.dlg.mOpacityWidget_Training.opacityChanged.connect(self.state_changed_training)
+        self.dlg.mOpacityWidget_Validating.opacityChanged.connect(self.state_changed_training)
 
         # show the dialog
         self.dlg.show()
@@ -307,5 +333,10 @@ class SplitRSData:
                     segMaskB2I(label, saver)
             else :
                 feedback.pushInfo("Option instance segmentation is not selected")
+
+            # if self.dlg.checkBoxPaddle.isChecked():
+                # generate_list()
+            # else :
+                # feedback.pushInfo("Option instance segmentation is not selected")
 
             iface.messageBar().pushMessage("You will find the dataset in " + image_folder_path, level=Qgis.Success, duration=5)
