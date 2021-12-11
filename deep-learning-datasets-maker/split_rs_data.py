@@ -306,6 +306,6 @@ class SplitRSData:
                     saver = osp.join(save_path, name)
                     segMaskB2I(label, saver)
             else :
-                feedback.pushInfo(str(save_path))
+                feedback.pushInfo("Option instance segmentation is not selected")
 
             iface.messageBar().pushMessage("You will find the dataset in " + image_folder_path, level=Qgis.Success, duration=5)
