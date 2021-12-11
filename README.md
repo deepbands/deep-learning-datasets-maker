@@ -2,6 +2,7 @@
   <article style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
       <p align="center"><img width="300" src="./docs/img/logo.png" /></p>
       <h1 style="width: 100%; text-align: center;">Deep Learning Dataset Maker</h1>
+      <p align="center">We ❤️ Open Source</p>
   </article>
 </div>
 
@@ -29,4 +30,4 @@ git clone git@github.com:deepbands/deep-learning-datasets-maker.git
 
 - [ ] Fix: If vector layer saved in memory not in file, `rasterize` can't work.
 - [X] Fix: Splitiing Image Size.
-
+- [ ] Converted semantic segmentation (0 and 1) to instance segmentation for labels (the original label is 0/255) option, and the result is a single-channel image that uses a palette to color. ![](https://s3.bmp.ovh/imgs/2021/09/008c5b768b7e477a.png)
