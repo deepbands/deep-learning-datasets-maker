@@ -33,6 +33,10 @@ from .resources import *
 from .split_rs_data_dialog import SplitRSDataDialog
 import os.path
 from qgis.utils import iface
+import os
+import argparse
+import os.path as osp
+from tqdm import tqdm
 from .utils import *
 
 
@@ -70,7 +74,6 @@ class SplitRSData:
         # Check if plugin was started the first time in current QGIS session
         # Must be set in initGui() to survive plugin reloads
         self.first_start = None
-
     # noinspection PyMethodMayBeStatic
     def tr(self, message):
         """Get the translation for a string using Qt translation API.
@@ -174,7 +177,6 @@ class SplitRSData:
         # will be set False in run()
         self.first_start = True
 
-
     def unload(self):
         """Removes the plugin menu item and icon from QGIS GUI."""
         for action in self.actions:
@@ -203,24 +205,37 @@ class SplitRSData:
         if self.first_start == True:
             self.first_start = False
             self.dlg = SplitRSDataDialog()
+            if not self.dlg.isVisible():
+                self.dlg.show()
             # self.dlg.pushButtonVR.clicked.connect(self.select_output_rasterize)
             # self.dlg.pushButtonImg.clicked.connect(self.select_output_images)
             # self.dlg.pushButtonLabl.clicked.connect(self.select_output_labels)
         
         # Fetch the currently loaded layers
         # Set filewidget
+
         self.dlg.mQfwRasterized.setFilter("*.tif")
         self.dlg.mQfwRasterized.setDialogTitle("Select Output Rasterized File")
         self.dlg.mQfwImages.setDialogTitle("Select Output Images Files")
         self.dlg.mQfwImages.setFilePath("[Select Empty Folder]")
         self.dlg.mQfwLabels.setDialogTitle("Select Output Labels Files")
         self.dlg.mQfwLabels.setFilePath("[Select Empty Folder]")
+        self.dlg.mQfwLabels_InSeg.setDialogTitle("Select Output Inst Seg Labels Files")
+        self.dlg.mQfwLabels_InSeg.setFilePath("[Select Empty Folder]")
         # Populate the comboBox with names of all the loaded layers
         self.dlg.mMapLayerComboBoxR.setFilters(QgsMapLayerProxyModel.RasterLayer)
         self.dlg.mMapLayerComboBoxV.setFilters(QgsMapLayerProxyModel.PolygonLayer)
         self.dlg.comboBoxImgSize.clear()
         self.dlg.comboBoxImgSize.addItems(["64", "128", "256", "512", "1024"])
         self.dlg.comboBoxImgSize.setCurrentIndex(3)
+
+        def state_changed(self, int):
+            checker = self.dlg.checkBoxInSeg
+            if self.dlg.checkBoxInSeg.isChecked():
+                self.dlg.mQfwLabels_InSeg.setHidden(True)
+            else : 
+                self.dlg.mQfwLabels_InSeg.setHidden(False)
+        self.dlg.checkBoxInSeg.stateChanged.connect(state_changed(self, int))
 
         # show the dialog
         self.dlg.show()
@@ -270,4 +285,17 @@ class SplitRSData:
             gggg = fn_ras.dataProvider().dataSourceUri()
             splitting(gggg, image_folder_path, "jpg", "JPEG", "", SplittingSize, SplittingSize, currentrasterlay)
             splitting(output, label_folder_path, "png", "PNG", "", SplittingSize, SplittingSize, currentrasterlay) #should be the same name of image. vector name if needed-> currentvectorlay
+
+            label_path = label_folder_path
+            save_path = str(self.dlg.mQfwLabels_InSeg.filePath())
+            # names = os.listdir(label_path)
+            names = [f for f in os.listdir(label_path) if f.endswith('.png')]
+            if self.dlg.checkBoxInSeg.isChecked():
+                for name in names:
+                    label = osp.join(label_path, name)
+                    saver = osp.join(save_path, name)
+                    segMaskB2I(label, saver)
+            else :
+                feedback.pushInfo(str(save_path))
+
             iface.messageBar().pushMessage("You will find the dataset in " + image_folder_path, level=Qgis.Success, duration=5)
