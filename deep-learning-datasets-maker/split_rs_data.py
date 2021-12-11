@@ -197,6 +197,22 @@ class SplitRSData:
     #     filenameLB = QFileDialog.getExistingDirectory(self.dlg, 'Select Empty Folder For Labels')
     #     self.dlg.lineEditLabels.setText(filenameLB)
 
+    def state_changed(self, state):
+            """ Set the visibility of mQfwLabels_InSeg
+
+            Args:
+                state (int): Output the current status of three check boxes:
+                           0 selected
+                           1 half selected 
+                           2 unchecked
+            """
+            if state == 2:
+                self.dlg.mQfwLabels_InSeg.setHidden(False)
+                self.dlg.label_7.setHidden(False)
+            else : 
+                self.dlg.mQfwLabels_InSeg.setHidden(True)
+                self.dlg.label_7.setHidden(True)
+
     def run(self):
         """Run method that performs all the real work"""
 
@@ -228,14 +244,8 @@ class SplitRSData:
         self.dlg.comboBoxImgSize.clear()
         self.dlg.comboBoxImgSize.addItems(["64", "128", "256", "512", "1024"])
         self.dlg.comboBoxImgSize.setCurrentIndex(3)
-
-        def state_changed(self, int):
-            checker = self.dlg.checkBoxInSeg
-            if self.dlg.checkBoxInSeg.isChecked():
-                self.dlg.mQfwLabels_InSeg.setHidden(True)
-            else : 
-                self.dlg.mQfwLabels_InSeg.setHidden(False)
-        self.dlg.checkBoxInSeg.stateChanged.connect(state_changed(self, int))
+        self.dlg.checkBoxInSeg.setChecked(True)
+        self.dlg.checkBoxInSeg.stateChanged.connect(self.state_changed)
 
         # show the dialog
         self.dlg.show()
