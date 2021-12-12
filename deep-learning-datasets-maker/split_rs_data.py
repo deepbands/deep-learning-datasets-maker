@@ -37,7 +37,8 @@ from qgis.utils import iface
 import os
 import os.path as osp
 from .utils import *
-import argparse
+# import argparse
+from easydict import EasyDict as edict
 
 
 class SplitRSData:
@@ -207,11 +208,12 @@ class SplitRSData:
                            2 unchecked
             """
             if state == 2:
-                self.dlg.mQfwLabels_InSeg.setEnabled(True) #We also can use .setHidden(False)
+                self.dlg.mQfwLabels_InSeg.setEnabled(True)  # We also can use .setHidden(False)
                 self.dlg.label_7.setEnabled(True)
             else : 
                 self.dlg.mQfwLabels_InSeg.setEnabled(False)
                 self.dlg.label_7.setEnabled(False)
+
     def state_changed_paddle(self, state):
             if state == 2:
                 self.dlg.mOpacityWidget_Training.setEnabled(True)
@@ -256,11 +258,8 @@ class SplitRSData:
         self.dlg.mQfwRasterized.setFilter("*.tif")
         self.dlg.mQfwRasterized.setDialogTitle("Select Output Rasterized File")
         self.dlg.mQfwImages.setDialogTitle("Select Output Images Files")
-        self.dlg.mQfwImages.setFilePath("[Select Empty Folder]")
         self.dlg.mQfwLabels.setDialogTitle("Select Output Labels Files")
-        self.dlg.mQfwLabels.setFilePath("[Select Empty Folder]")
         self.dlg.mQfwLabels_InSeg.setDialogTitle("Select Output Inst Seg Labels Files")
-        self.dlg.mQfwLabels_InSeg.setFilePath("[Select Empty Folder]")
         # Populate the comboBox with names of all the loaded layers
         self.dlg.mMapLayerComboBoxR.setFilters(QgsMapLayerProxyModel.RasterLayer)
         self.dlg.mMapLayerComboBoxV.setFilters(QgsMapLayerProxyModel.PolygonLayer)
@@ -335,48 +334,21 @@ class SplitRSData:
                 feedback.pushInfo("Option instance segmentation is not selected")
 
             if self.dlg.checkBoxPaddle.isChecked():
-                    dataset_path = "/".join(image_folder_path.split("/")[:-1])
-                    Training_Set = self.dlg.mOpacityWidget_Training.opacity()
-                    Val_Set =  self.dlg.mOpacityWidget_Validating.opacity()
-                    Testing_Set = self.dlg.mOpacityWidget_Testing.opacity()
-                    def parse_args(dataset_path ,image_folder_path, label_folder_path, Training_Set, Val_Set, Testing_Set):
-                        parser = argparse.ArgumentParser(
-                            description=
-                            'A tool for proportionally randomizing dataset to produce file lists.')
-                        parser.add_argument('dataset_root', help='the dataset root path', type=str, default=dataset_path)
-                        parser.add_argument(
-                            'images_dir_name', help='the directory name of images', type=str, default=image_folder_path)
-                        parser.add_argument(
-                            'labels_dir_name', help='the directory name of labels', type=str, default=label_folder_path)
-                        parser.add_argument(
-                            '--split', help='', nargs=3, type=float, default=[Training_Set, Val_Set, Testing_Set])
-                        parser.add_argument(
-                            '--label_class',
-                            help='label class names',
-                            type=str,
-                            nargs='*',
-                            default=['__background__', '__foreground__'])
-                        parser.add_argument(
-                            '--separator',
-                            dest='separator',
-                            help='file list separator',
-                            default=" ",
-                            type=str)
-                        parser.add_argument(
-                            '--format',
-                            help='data format of images and labels, e.g. jpg, tif or png.',
-                            type=str,
-                            nargs=2,
-                            default=['jpg', 'png'])
-                        parser.add_argument(
-                            '--postfix',
-                            help='postfix of images or labels',
-                            type=str,
-                            nargs=2,
-                            default=['', ''])
-
-                        return parser.parse_args()
-                    args = parse_args(dataset_path ,image_folder_path, label_folder_path, Training_Set, Val_Set, Testing_Set)
-                    generate_list(args)
+                dataset_path = os.path.dirname(image_folder_path)
+                Training_Set = self.dlg.mOpacityWidget_Training.opacity()
+                Val_Set =  self.dlg.mOpacityWidget_Validating.opacity()
+                Testing_Set = self.dlg.mOpacityWidget_Testing.opacity()
+                
+                args = edict()
+                args.dataset_root = dataset_path
+                args.images_dir_name = image_folder_path
+                args.labels_dir_name = label_folder_path
+                args.split = [Training_Set, Val_Set, Testing_Set]
+                args.label_class = ['__background__', '__foreground__']
+                args.separator = " "
+                args.format = ['jpg', 'png']
+                args.postfix = ['', '']
+                print(args)  # test
+                generate_list(args)
 
             iface.messageBar().pushMessage("You will find the dataset in " + dataset_path, level=Qgis.Success, duration=5)

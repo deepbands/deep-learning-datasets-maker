@@ -46,6 +46,7 @@ def generate_list(args):
     file_list = os.path.join(dataset_root, 'labels.txt')
     with open(file_list, "w") as f:
         for label_class in args.label_class:
+            print(label_class)  # test
             f.write(label_class + '\n')
 
     image_dir = os.path.join(dataset_root, args.images_dir_name)
@@ -104,7 +105,7 @@ def generate_list(args):
                     line = left + '\n'
 
                 f.write(line)
-                print(line)
+                # print(line)  # test
             start = end
 
 
