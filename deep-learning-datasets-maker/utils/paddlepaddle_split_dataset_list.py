@@ -1,4 +1,4 @@
-# import glob
+import glob
 import os.path
 # import argparse
 import warnings
@@ -44,26 +44,28 @@ import numpy as np
 #     return parser.parse_args()
 
 
-# def get_files(path, format, postfix):
-#     pattern = '*%s.%s' % (postfix, format)
+def get_files(dataset_root, format, postfix, image_folder_path):
+    dataset_root = "/".join(image_folder_path.split("/")[:-2])
+    pattern = '*%s.%s' % (postfix, format)
 
-#     search_files = os.path.join(path, pattern)
-#     search_files2 = os.path.join(path, "*", pattern)  # Include subdirectories
-#     search_files3 = os.path.join(path, "*", "*", pattern)  # Contains three levels of directories
+    search_files = os.path.join(dataset_root, pattern)
+    search_files2 = os.path.join(dataset_root, "*", pattern)  # Include subdirectories
+    search_files3 = os.path.join(dataset_root, "*", "*", pattern)  # Contains three levels of directories
 
-#     filenames = glob.glob(search_files)
-#     filenames2 = glob.glob(search_files2)
-#     filenames3 = glob.glob(search_files3)
+    filenames = glob.glob(search_files)
+    filenames2 = glob.glob(search_files2)
+    filenames3 = glob.glob(search_files3)
 
-#     filenames = filenames + filenames2 + filenames3
+    filenames = filenames + filenames2 + filenames3
 
-#     return sorted(filenames)
+    return sorted(filenames)
 
 
-def pp_generate_list(args):
+def pp_generate_list(args, image_folder_path, label_folder_path, Training_Set, Val_Set, Testing_Set):
     separator = "args.separator"
-    dataset_root = "/".join(rasdir.split("/")[:-2])
-    if sum(args.split) != 1.0:
+    dataset_root = "/".join(image_folder_path.split("/")[:-2])
+    all_sum_sets = Training_Set+Val_Set+Testing_Set
+    if all_sum_sets != 1.0:
         raise ValueError("The sum of the division ratios must be 1")
 
     file_list = os.path.join(dataset_root, 'labels.txt')

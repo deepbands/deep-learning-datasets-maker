@@ -318,18 +318,17 @@ class SplitRSData:
             # label_folder_path = str(self.dlg.lineEditLabels.text())
             image_folder_path = str(self.dlg.mQfwImages.filePath())
             label_folder_path = str(self.dlg.mQfwLabels.filePath())
-            gggg = fn_ras.dataProvider().dataSourceUri()
-            splitting(gggg, image_folder_path, "jpg", "JPEG", "", SplittingSize, SplittingSize, currentrasterlay)
+            fn_ras_path = fn_ras.dataProvider().dataSourceUri()
+            splitting(fn_ras_path, image_folder_path, "jpg", "JPEG", "", SplittingSize, SplittingSize, currentrasterlay)
             splitting(output, label_folder_path, "png", "PNG", "", SplittingSize, SplittingSize, currentrasterlay) #should be the same name of image. vector name if needed-> currentvectorlay
 
-            label_path = label_folder_path
-            save_path = str(self.dlg.mQfwLabels_InSeg.filePath())
-            # names = os.listdir(label_path)
-            names = [f for f in os.listdir(label_path) if f.endswith('.png')]
+            save_path_InSeg = str(self.dlg.mQfwLabels_InSeg.filePath())
+            # names = os.listdir(label_folder_path)
+            names = [f for f in os.listdir(label_folder_path) if f.endswith('.png')]
             if self.dlg.checkBoxInSeg.isChecked():
                 for name in names:
-                    label = osp.join(label_path, name)
-                    saver = osp.join(save_path, name)
+                    label = osp.join(label_folder_path, name)
+                    saver = osp.join(save_path_InSeg, name)
                     segMaskB2I(label, saver)
             else :
                 feedback.pushInfo("Option instance segmentation is not selected")
