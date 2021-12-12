@@ -10,7 +10,7 @@
 
 Deep Learning Datasets Maker is a QGIS plugin to make datasets creation easier for raster and vector data.
 
-![image](https://user-images.githubusercontent.com/13020265/145611943-5895b715-68d2-4de8-96a7-c7e6170936e1.png)
+![image](https://user-images.githubusercontent.com/13020265/145733632-cc0d6029-9c51-4b6b-b914-41ad051e8db3.png)
 
 ## How to use
 
@@ -39,8 +39,14 @@ git clone git@github.com:deepbands/deep-learning-datasets-maker.git
 ## TODO
 
 - [ ] Fix: If vector layer saved in memory not in file, `rasterize` can't work.
+- [x] Splitting raster data into equal pieces with [GDAL](https://github.com/OSGeo/gdal) , https://gdal.org/.
 - [X] Fix: Splitiing Image Size.
+- [x] Rasterize shapefile to raster in the same satellite pixel size and projection.
+- [x] Convert 24 or 16 bit raster to 8 bit.
+- [x] Export as jpg (for raster) and png (for rasterized shapefile) with GDAL.
 - [X] Converted semantic segmentation (0 and 1) to instance segmentation for labels (the original label is 0/255) option, and the result is a single-channel image that uses a palette to color. ![](https://s3.bmp.ovh/imgs/2021/09/008c5b768b7e477a.png)
 - [X] PaddlePaddle Train/Val/Testing list text.
 - [ ] Use GDAL for instance segmentation instead of openCV.
 - [ ] Support COCO format.
+- [ ] Update plugin's UI : 
+  - [ ] Add new tabs for other methods like COCO.
