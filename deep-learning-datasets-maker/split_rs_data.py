@@ -308,7 +308,7 @@ class SplitRSData:
             
             rasterize(ras_path, vec_path, output)
             iface.messageBar().pushMessage("You will find the rasterized file in " + output, level=Qgis.Info, duration=5)
-            iface.addRasterLayer(output, "0-1-class")
+            iface.addRasterLayer(output, "deepbands-datasets")
 
             # feedback.pushInfo(str(fn_ras.dataProvider().dataSourceUri()))
             # feedback.pushInfo(str(fn_vec.dataProvider().dataSourceUri()))

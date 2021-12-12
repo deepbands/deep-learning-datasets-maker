@@ -18,17 +18,27 @@ Deep Learning Datasets Maker is a QGIS plugin to make datasets creation easier f
 ``` git
 git clone git@github.com:deepbands/deep-learning-datasets-maker.git
 ```
+2. Install requirements :
+   - Enter the folder and install dependent libraries using OSGeo4W shell (Open As Administrator) :
+   ``` shell
+   cd deep-learning-datasets-maker
+   pip install -r requirements.txt
+   ```
+   - Or open OSGeo4W shell as administrator and enter :
+    ``` shell
+    pip install opencv-python --user
+    ```
 
-2. Copy folder named deep-learning-datasets-maker in QGIS configuration folder and choose the plugin from plugin manager in QGIS (If not appeared restart QGIS).
+3. Copy folder named deep-learning-datasets-maker in QGIS configuration folder and choose the plugin from plugin manager in QGIS (If not appeared restart QGIS).
    - You can know this folder from QGIS Setting Menu at the top-left of QGIS UI `Settings > User Profiles > Open Active Profile Folder` .
    - Go to `python/plugins` then paste the deep-learning-datasets-maker folder.
    - Full path should be like : `C:\Users\$USER\AppData\Roaming\QGIS\QGIS3\profiles\default\python\plugins\deep-learning-datasets-maker`.
 
-3. Open QGIS, load your raster and vector data then select the output paths for rasterized, images and labels then click `ok`.
+4. Open QGIS, load your raster and vector data then select the output paths for rasterized, images and labels then click `ok`.
 
 ## TODO
 
 - [ ] Fix: If vector layer saved in memory not in file, `rasterize` can't work.
 - [X] Fix: Splitiing Image Size.
 - [X] Converted semantic segmentation (0 and 1) to instance segmentation for labels (the original label is 0/255) option, and the result is a single-channel image that uses a palette to color. ![](https://s3.bmp.ovh/imgs/2021/09/008c5b768b7e477a.png)
-- [ ] PaddlePaddle Train/Val/Testing list text.
+- [X] PaddlePaddle Train/Val/Testing list text.

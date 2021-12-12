@@ -12,8 +12,8 @@
 # See the License for the specific language governing permissions and 
 # limitations under the License.
 
-import os
-import argparse
+# import os
+# import argparse
 import numpy as np
 import cv2
 from PIL import Image
