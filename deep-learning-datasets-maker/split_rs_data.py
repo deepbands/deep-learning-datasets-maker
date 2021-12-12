@@ -38,7 +38,6 @@ import os
 import os.path as osp
 from .utils import *
 # import argparse
-from easydict import EasyDict as edict
 
 
 class SplitRSData:
@@ -339,16 +338,16 @@ class SplitRSData:
                 Val_Set =  self.dlg.mOpacityWidget_Validating.opacity()
                 Testing_Set = self.dlg.mOpacityWidget_Testing.opacity()
                 
-                args = edict()
-                args.dataset_root = dataset_path
-                args.images_dir_name = image_folder_path
-                args.labels_dir_name = label_folder_path
-                args.split = [Training_Set, Val_Set, Testing_Set]
-                args.label_class = ['__background__', '__foreground__']
-                args.separator = " "
-                args.format = ['jpg', 'png']
-                args.postfix = ['', '']
-                print(args)  # test
+                args = {
+                    "dataset_root": dataset_path,
+                    "images_dir_name": image_folder_path,
+                    "labels_dir_name": label_folder_path,
+                    "split": [Training_Set, Val_Set, Testing_Set],
+                    "label_class": ['__background__', '__foreground__'],
+                    "separator": " ",
+                    "format": ['jpg', 'png'],
+                    "postfix": ['', '']
+                }
                 generate_list(args)
 
             iface.messageBar().pushMessage("You will find the dataset in " + dataset_path, level=Qgis.Success, duration=5)

@@ -19,6 +19,8 @@ import os.path
 import warnings
 import numpy as np
 
+
+
 # TODO:  assign command line argument to variable
 
 def get_files(path, format, postfix):
@@ -38,21 +40,21 @@ def get_files(path, format, postfix):
 
 
 def generate_list(args):
-    separator = args.separator
-    dataset_root = args.dataset_root
-    if sum(args.split) != 1.0:
+    separator = args["separator"]
+    dataset_root = args["dataset_root"]
+    if sum(args["split"]) != 1.0:
         raise ValueError("划分比例之和必须为1")
 
     file_list = os.path.join(dataset_root, 'labels.txt')
     with open(file_list, "w") as f:
-        for label_class in args.label_class:
-            print(label_class)  # test
+        for label_class in args["label_class"]:
+            # print(label_class)  # test
             f.write(label_class + '\n')
 
-    image_dir = os.path.join(dataset_root, args.images_dir_name)
-    label_dir = os.path.join(dataset_root, args.labels_dir_name)
-    image_files = get_files(image_dir, args.format[0], args.postfix[0])
-    label_files = get_files(label_dir, args.format[1], args.postfix[1])
+    image_dir = os.path.join(dataset_root, args["images_dir_name"])
+    label_dir = os.path.join(dataset_root, args["labels_dir_name"])
+    image_files = get_files(image_dir, args["format"][0], args["postfix"][0])
+    label_files = get_files(label_dir, args["format"][1], args["postfix"][1])
     if not image_files:
         warnings.warn("No files in {}".format(image_dir))
     num_images = len(image_files)
@@ -76,18 +78,18 @@ def generate_list(args):
     np.random.shuffle(label_files)
 
     start = 0
-    num_split = len(args.split)
+    num_split = len(args["split"])
     dataset_name = ['train', 'val', 'test']
     for i in range(num_split):
         dataset_split = dataset_name[i]
         print("Creating {}.txt...".format(dataset_split))
-        if args.split[i] > 1.0 or args.split[i] < 0:
+        if args["split"][i] > 1.0 or args["split"][i] < 0:
             raise ValueError(
                 "{} dataset percentage should be 0~1.".format(dataset_split))
 
         file_list = os.path.join(dataset_root, dataset_split + '.txt')
         with open(file_list, "w") as f:
-            num = round(args.split[i] * num_images)
+            num = round(args["split"][i] * num_images)
             end = start + num
             if i == num_split - 1:
                 end = num_images
