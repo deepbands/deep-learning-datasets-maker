@@ -37,6 +37,7 @@ from qgis.utils import iface
 import os
 import os.path as osp
 from .utils import *
+import argparse
 
 
 class SplitRSData:
@@ -333,9 +334,49 @@ class SplitRSData:
             else :
                 feedback.pushInfo("Option instance segmentation is not selected")
 
-            # if self.dlg.checkBoxPaddle.isChecked():
-                # generate_list()
-            # else :
-                # feedback.pushInfo("Option instance segmentation is not selected")
+            if self.dlg.checkBoxPaddle.isChecked():
+                    dataset_path = "/".join(image_folder_path.split("/")[:-1])
+                    Training_Set = self.dlg.mOpacityWidget_Training.opacity()
+                    Val_Set =  self.dlg.mOpacityWidget_Validating.opacity()
+                    Testing_Set = self.dlg.mOpacityWidget_Testing.opacity()
+                    def parse_args(dataset_path ,image_folder_path, label_folder_path, Training_Set, Val_Set, Testing_Set):
+                        parser = argparse.ArgumentParser(
+                            description=
+                            'A tool for proportionally randomizing dataset to produce file lists.')
+                        parser.add_argument('dataset_root', help='the dataset root path', type=str, default=dataset_path)
+                        parser.add_argument(
+                            'images_dir_name', help='the directory name of images', type=str, default=image_folder_path)
+                        parser.add_argument(
+                            'labels_dir_name', help='the directory name of labels', type=str, default=label_folder_path)
+                        parser.add_argument(
+                            '--split', help='', nargs=3, type=float, default=[Training_Set, Val_Set, Testing_Set])
+                        parser.add_argument(
+                            '--label_class',
+                            help='label class names',
+                            type=str,
+                            nargs='*',
+                            default=['__background__', '__foreground__'])
+                        parser.add_argument(
+                            '--separator',
+                            dest='separator',
+                            help='file list separator',
+                            default=" ",
+                            type=str)
+                        parser.add_argument(
+                            '--format',
+                            help='data format of images and labels, e.g. jpg, tif or png.',
+                            type=str,
+                            nargs=2,
+                            default=['jpg', 'png'])
+                        parser.add_argument(
+                            '--postfix',
+                            help='postfix of images or labels',
+                            type=str,
+                            nargs=2,
+                            default=['', ''])
 
-            iface.messageBar().pushMessage("You will find the dataset in " + image_folder_path, level=Qgis.Success, duration=5)
+                        return parser.parse_args()
+                    args = parse_args(dataset_path ,image_folder_path, label_folder_path, Training_Set, Val_Set, Testing_Set)
+                    generate_list(args)
+
+            iface.messageBar().pushMessage("You will find the dataset in " + dataset_path, level=Qgis.Success, duration=5)

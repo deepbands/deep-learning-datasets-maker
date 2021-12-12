@@ -15,49 +15,11 @@
 
 import glob
 import os.path
-import argparse
+# import argparse
 import warnings
 import numpy as np
 
 # TODO:  assign command line argument to variable
-def parse_args():
-    parser = argparse.ArgumentParser(
-        description=
-        'A tool for proportionally randomizing dataset to produce file lists.')
-    parser.add_argument('dataset_root', help='the dataset root path', type=str)
-    parser.add_argument(
-        'images_dir_name', help='the directory name of images', type=str)
-    parser.add_argument(
-        'labels_dir_name', help='the directory name of labels', type=str)
-    parser.add_argument(
-        '--split', help='', nargs=3, type=float, default=[0.7, 0.3, 0])
-    parser.add_argument(
-        '--label_class',
-        help='label class names',
-        type=str,
-        nargs='*',
-        default=['__background__', '__foreground__'])
-    parser.add_argument(
-        '--separator',
-        dest='separator',
-        help='file list separator',
-        default=" ",
-        type=str)
-    parser.add_argument(
-        '--format',
-        help='data format of images and labels, e.g. jpg, tif or png.',
-        type=str,
-        nargs=2,
-        default=['jpg', 'png'])
-    parser.add_argument(
-        '--postfix',
-        help='postfix of images or labels',
-        type=str,
-        nargs=2,
-        default=['', ''])
-
-    return parser.parse_args()
-
 
 def get_files(path, format, postfix):
     pattern = '*%s.%s' % (postfix, format)
@@ -146,6 +108,6 @@ def generate_list(args):
             start = end
 
 
-if __name__ == '__main__':
-    args = parse_args()
-    generate_list(args)
+# if __name__ == '__main__':
+#     args = parse_args()
+#     generate_list(args)
