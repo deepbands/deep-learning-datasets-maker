@@ -42,3 +42,9 @@ class SplitRSDataDialog(QtWidgets.QDialog, FORM_CLASS):
         # http://qt-project.org/doc/qt-4.8/designer-using-a-ui-file.html
         # #widgets-and-dialogs-with-auto-connect
         self.setupUi(self)
+        # self.tabWidget.currentChanged.connect(self.tabChanged)
+        # tabInd = self.tabWidget.currentIndex()
+
+    # def tabChanged(self):
+        # tabIndex = self.tabWidget.currentIndex()
+        # print ('tab was changed to', self.tabWidget.currentIndex())
