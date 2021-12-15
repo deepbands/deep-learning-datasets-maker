@@ -6,26 +6,26 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>478</width>
-    <height>477</height>
+    <width>480</width>
+    <height>480</height>
    </rect>
   </property>
   <property name="sizePolicy">
-   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
     <horstretch>0</horstretch>
     <verstretch>0</verstretch>
    </sizepolicy>
   </property>
   <property name="minimumSize">
    <size>
-    <width>300</width>
-    <height>300</height>
+    <width>480</width>
+    <height>480</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
-    <width>1000</width>
-    <height>1000</height>
+    <width>480</width>
+    <height>480</height>
    </size>
   </property>
   <property name="windowTitle">
@@ -36,8 +36,8 @@
     <rect>
      <x>20</x>
      <y>20</y>
-     <width>441</width>
-     <height>411</height>
+     <width>440</width>
+     <height>400</height>
     </rect>
    </property>
    <property name="currentIndex">
@@ -51,7 +51,7 @@
      <property name="geometry">
       <rect>
        <x>10</x>
-       <y>16</y>
+       <y>10</y>
        <width>416</width>
        <height>344</height>
       </rect>
@@ -200,7 +200,7 @@
           </property>
           <property name="sizeHint" stdset="0">
            <size>
-            <width>20</width>
+            <width>18</width>
             <height>20</height>
            </size>
           </property>
@@ -454,6 +454,308 @@
     <attribute name="title">
      <string>COCO</string>
     </attribute>
+    <widget class="QWidget" name="layoutWidget_2">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>10</y>
+       <width>416</width>
+       <height>344</height>
+      </rect>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_2">
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_19">
+        <item>
+         <widget class="QLabel" name="label_19">
+          <property name="minimumSize">
+           <size>
+            <width>176</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>176</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>Input Raster Layer</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QgsMapLayerComboBox" name="mMapLayerComboBoxR_2">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>230</width>
+            <height>27</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>230</width>
+            <height>16777215</height>
+           </size>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_20">
+        <item>
+         <widget class="QLabel" name="label_20">
+          <property name="minimumSize">
+           <size>
+            <width>176</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>176</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>Input Vector Layer</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QgsMapLayerComboBox" name="mMapLayerComboBoxV_2">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>230</width>
+            <height>27</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>230</width>
+            <height>16777215</height>
+           </size>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_21">
+        <item>
+         <widget class="QLabel" name="label_21">
+          <property name="minimumSize">
+           <size>
+            <width>176</width>
+            <height>16</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>176</width>
+            <height>16</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>Splitting Image Size</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QComboBox" name="comboBoxImgSize_3">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>100</width>
+            <height>22</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>100</width>
+            <height>22</height>
+           </size>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="horizontalSpacer_3">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeType">
+           <enum>QSizePolicy::Expanding</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_22">
+        <item>
+         <widget class="QLabel" name="label_22">
+          <property name="minimumSize">
+           <size>
+            <width>176</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>176</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>Output Datasets Path</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QgsFileWidget" name="mQfwCOCOout">
+          <property name="storageMode">
+           <enum>QgsFileWidget::SaveFile</enum>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <widget class="QCheckBox" name="checkBoxCOCO">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
+        <property name="text">
+         <string>COCO Spilit Custom Dataset and Generate File List</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_26">
+        <item>
+         <widget class="QLabel" name="label_26">
+          <property name="enabled">
+           <bool>true</bool>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>176</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>176</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>Training</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QgsOpacityWidget" name="mOpacityWidget_Training_COCO">
+          <property name="enabled">
+           <bool>true</bool>
+          </property>
+          <property name="opacity">
+           <double>0.600000000000000</double>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_27">
+        <item>
+         <widget class="QLabel" name="label_27">
+          <property name="minimumSize">
+           <size>
+            <width>176</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>176</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>Validating</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QgsOpacityWidget" name="mOpacityWidget_Validating_COCO">
+          <property name="opacity">
+           <double>0.200000000000000</double>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_28">
+        <item>
+         <widget class="QLabel" name="label_28">
+          <property name="minimumSize">
+           <size>
+            <width>176</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>176</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>Testing</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QgsOpacityWidget" name="mOpacityWidget_Testing_COCO">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="opacity">
+           <double>0.200000000000000</double>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </widget>
    </widget>
   </widget>
   <widget class="QDialogButtonBox" name="button_box">

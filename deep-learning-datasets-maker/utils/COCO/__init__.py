@@ -1,0 +1,1 @@
+from .shape_to_coco import clip_from_file
