@@ -185,18 +185,6 @@ class SplitRSData:
                 action)
             self.iface.removeToolBarIcon(action)
 
-    # def select_output_rasterize(self):
-    #     filenameVR, _filter = QFileDialog.getSaveFileName(self.dlg, "Select Output Rasterized File","",'*.tif')
-    #     self.dlg.lineEditV_R.setText(filenameVR)
-    # def select_output_images(self):
-    #     # filenameIM, _filter = QFileDialog.getSaveFileName(self.dlg, "Select Output Images Files","",'*.jpg') 
-    #     filenameIM = QFileDialog.getExistingDirectory(self.dlg, 'Select Empty Folder For Images')
-    #     self.dlg.lineEditImages.setText(filenameIM)
-    # def select_output_labels(self):
-    #     # filenameLB, _filter = QFileDialog.getSaveFileName(self.dlg, "Select Output Labels Files","",'*.png')
-    #     filenameLB = QFileDialog.getExistingDirectory(self.dlg, 'Select Empty Folder For Labels')
-    #     self.dlg.lineEditLabels.setText(filenameLB)
-
     def state_changed(self, state):
             """ Set the visibility of mQfwLabels_InSeg
 
@@ -228,7 +216,6 @@ class SplitRSData:
                 self.dlg.label_10.setEnabled(False)
     
     def state_changed_training(self, state):
-            # testing_set = 1.0 - (double(self.dlg.mOpacityWidget_Training.opacity()) + double(self.dlg.mOpacityWidget_Validating.opacity()))
             Training_Set = self.dlg.mOpacityWidget_Training.opacity()
             Val_Set =  self.dlg.mOpacityWidget_Validating.opacity()
             Testing_Set = self.dlg.mOpacityWidget_Testing.opacity()
@@ -245,21 +232,9 @@ class SplitRSData:
         if self.first_start == True:
             self.first_start = False
             self.dlg = SplitRSDataDialog()
-            # if not self.dlg.isVisible():
-            #     self.dlg.show()
-            # self.dlg.pushButtonVR.clicked.connect(self.select_output_rasterize)
-            # self.dlg.pushButtonImg.clicked.connect(self.select_output_images)
-            # self.dlg.pushButtonLabl.clicked.connect(self.select_output_labels)
         
         # Fetch the currently loaded layers
-        # Set filewidget
-
-        # self.dlg.mQfwRasterized.setFilter("*.tif")
-        # self.dlg.mQfwRasterized.setDialogTitle("Select Output Rasterized File")
         self.dlg.mQfwDataset.setDialogTitle("Select Output Images Files")
-        # self.dlg.mQfwLabels.setDialogTitle("Select Output Labels Files")
-        # self.dlg.mQfwLabels_InSeg.setDialogTitle("Select Output Inst Seg Labels Files")
-        # Populate the comboBox with names of all the loaded layers
         self.dlg.mMapLayerComboBoxR.setFilters(QgsMapLayerProxyModel.RasterLayer)
         self.dlg.mMapLayerComboBoxV.setFilters(QgsMapLayerProxyModel.PolygonLayer)
         self.dlg.comboBoxImgSize.clear()
@@ -271,7 +246,6 @@ class SplitRSData:
         self.dlg.checkBoxPaddle.stateChanged.connect(self.state_changed_paddle)
         self.dlg.mOpacityWidget_Training.opacityChanged.connect(self.state_changed_training)
         self.dlg.mOpacityWidget_Validating.opacityChanged.connect(self.state_changed_training)
-        # print (self.dlg.tabWidget.currentIndex())
 
         # show the dialog
         self.dlg.show()
@@ -279,18 +253,13 @@ class SplitRSData:
         result = self.dlg.exec_()
         # See if OK was pressed
         if result:
-            # if  self.dlg.tabWidget.currentIndex() == 0 :
             currentrasterlay = self.dlg.mMapLayerComboBoxR.currentText()  # Get the selected raster layer
             rlayers = QgsProject.instance().mapLayersByName(currentrasterlay)
             fn_ras = rlayers[0]
             currentvectorlay = self.dlg.mMapLayerComboBoxV.currentText()  # Get the selected raster layer
             vlayers = QgsProject.instance().mapLayersByName(currentvectorlay)
             fn_vec = vlayers[0]
-            # ttt = (tempfile.NamedTemporaryFile(suffix='.shp'))
-            # output = str(self.dlg.lineEditV_R.text())
-            # output = str(self.dlg.mQfwRasterized.filePath())
-            SplittingSize = int(self.dlg.comboBoxImgSize.currentText()) # $$$$$$$$$$$$$$$$$$$$$
-            # SplittingSize = self.dlg.label.setText(str(index_SplittingSize))
+            SplittingSize = int(self.dlg.comboBoxImgSize.currentText())
 
             # Log for files
             ras_path = str(fn_ras.dataProvider().dataSourceUri())
@@ -314,28 +283,17 @@ class SplitRSData:
             mkdir_p(InSeg_Paddle_path)
 
             feedback = QgsProcessingFeedback()
-            feedback.pushInfo(ras_path)
-            feedback.pushInfo(vec_path)
-            feedback.pushInfo(output)
-            feedback.pushInfo(str(SplittingSize))
+            feedback.pushInfo('Raster Path', ras_path)
+            feedback.pushInfo('Vector Path', vec_path)
+            feedback.pushInfo('Output Rasterized Path', output)
+            feedback.pushInfo('Imge Splitting Size',str(SplittingSize))
 
-            # import os.path as ops
-            # print(ops.exists(vec_path))
-
-            # iface.messageBar().pushMessage(output, level=Qgis.Critical)
             # TODO: if shp in memory, it can't work
             
             rasterize(ras_path, vec_path, output)
             iface.messageBar().pushMessage("You will find the rasterized file in " + output, level=Qgis.Info, duration=5)
             iface.addRasterLayer(output, "deepbands-datasets")
 
-            # feedback.pushInfo(str(fn_ras.dataProvider().dataSourceUri()))
-            # feedback.pushInfo(str(fn_vec.dataProvider().dataSourceUri()))
-            # do it 
-            # image_folder_path = str(self.dlg.lineEditImages.text())
-            # label_folder_path = str(self.dlg.lineEditLabels.text())
-            # image_folder_path = str(self.dlg.mQfwDataset.filePath())
-            # label_folder_path = str(self.dlg.mQfwLabels.filePath())
             fn_ras_path = fn_ras.dataProvider().dataSourceUri()
             splitting(fn_ras_path, image_Paddle_path, "jpg", "JPEG", "", SplittingSize, SplittingSize, currentrasterlay)
             splitting(output, label_Paddle_path, "png", "PNG", "", SplittingSize, SplittingSize, currentrasterlay) #should be the same name of image. vector name if needed-> currentvectorlay
@@ -379,12 +337,13 @@ class SplitRSData:
                 train_COCO_path = osp.join(dataset_COCO, "train/")
                 eval_COCO_path = osp.join(dataset_COCO, "eval/")
                 test_COCO_path = osp.join(dataset_COCO, "test/")
+
                 mkdir_p(Ras_COCO_path)
                 mkdir_p(annotations_COCO_path)
                 mkdir_p(train_COCO_path)
                 mkdir_p(eval_COCO_path)
                 mkdir_p(test_COCO_path)
-                # mkdir_p(InSeg_COCO_path)
+
                 clip_from_file(SplittingSize, ROOT, fn_ras_path, vec_path)
                 slice(dataset_COCO, train=Training_Set, eval=Val_Set, test=Testing_Set)
                 from_mask_to_coco(dataset_COCO, 'train', "image", "annotations")
