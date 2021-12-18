@@ -36,6 +36,7 @@ from .split_rs_data_dialog import SplitRSDataDialog
 import os
 import os.path as osp
 from .utils import *
+from .utils.COCO import *
 # import argparse
 
 
@@ -205,12 +206,12 @@ class SplitRSData:
                            1 half selected 
                            2 unchecked
             """
-            if state == 2:
-                self.dlg.mQfwLabels_InSeg.setEnabled(True)  # We also can use .setHidden(False)
-                self.dlg.label_7.setEnabled(True)
-            else : 
-                self.dlg.mQfwLabels_InSeg.setEnabled(False)
-                self.dlg.label_7.setEnabled(False)
+            # if state == 2:
+                # self.dlg.mQfwLabels_InSeg.setEnabled(True)  # We also can use .setHidden(False)
+                # self.dlg.label_7.setEnabled(True)
+            # else : 
+                # self.dlg.mQfwLabels_InSeg.setEnabled(False)
+                # self.dlg.label_7.setEnabled(False)
 
     def state_changed_paddle(self, state):
             if state == 2:
@@ -253,11 +254,11 @@ class SplitRSData:
         # Fetch the currently loaded layers
         # Set filewidget
 
-        self.dlg.mQfwRasterized.setFilter("*.tif")
-        self.dlg.mQfwRasterized.setDialogTitle("Select Output Rasterized File")
-        self.dlg.mQfwImages.setDialogTitle("Select Output Images Files")
-        self.dlg.mQfwLabels.setDialogTitle("Select Output Labels Files")
-        self.dlg.mQfwLabels_InSeg.setDialogTitle("Select Output Inst Seg Labels Files")
+        # self.dlg.mQfwRasterized.setFilter("*.tif")
+        # self.dlg.mQfwRasterized.setDialogTitle("Select Output Rasterized File")
+        self.dlg.mQfwDataset.setDialogTitle("Select Output Images Files")
+        # self.dlg.mQfwLabels.setDialogTitle("Select Output Labels Files")
+        # self.dlg.mQfwLabels_InSeg.setDialogTitle("Select Output Inst Seg Labels Files")
         # Populate the comboBox with names of all the loaded layers
         self.dlg.mMapLayerComboBoxR.setFilters(QgsMapLayerProxyModel.RasterLayer)
         self.dlg.mMapLayerComboBoxV.setFilters(QgsMapLayerProxyModel.PolygonLayer)
@@ -270,7 +271,7 @@ class SplitRSData:
         self.dlg.checkBoxPaddle.stateChanged.connect(self.state_changed_paddle)
         self.dlg.mOpacityWidget_Training.opacityChanged.connect(self.state_changed_training)
         self.dlg.mOpacityWidget_Validating.opacityChanged.connect(self.state_changed_training)
-        print (self.dlg.tabWidget.currentIndex())
+        # print (self.dlg.tabWidget.currentIndex())
 
         # show the dialog
         self.dlg.show()
@@ -278,79 +279,116 @@ class SplitRSData:
         result = self.dlg.exec_()
         # See if OK was pressed
         if result:
-            if  self.dlg.tabWidget.currentIndex() == 0 :
-                    currentrasterlay = self.dlg.mMapLayerComboBoxR.currentText()  # Get the selected raster layer
-                    rlayers = QgsProject.instance().mapLayersByName(currentrasterlay)
-                    fn_ras = rlayers[0]
-                    currentvectorlay = self.dlg.mMapLayerComboBoxV.currentText()  # Get the selected raster layer
-                    vlayers = QgsProject.instance().mapLayersByName(currentvectorlay)
-                    fn_vec = vlayers[0]
-                    # ttt = (tempfile.NamedTemporaryFile(suffix='.shp'))
-                    # output = str(self.dlg.lineEditV_R.text())
-                    output = str(self.dlg.mQfwRasterized.filePath())
-                    SplittingSize = int(self.dlg.comboBoxImgSize.currentText()) # $$$$$$$$$$$$$$$$$$$$$
-                    # SplittingSize = self.dlg.label.setText(str(index_SplittingSize))
+            # if  self.dlg.tabWidget.currentIndex() == 0 :
+            currentrasterlay = self.dlg.mMapLayerComboBoxR.currentText()  # Get the selected raster layer
+            rlayers = QgsProject.instance().mapLayersByName(currentrasterlay)
+            fn_ras = rlayers[0]
+            currentvectorlay = self.dlg.mMapLayerComboBoxV.currentText()  # Get the selected raster layer
+            vlayers = QgsProject.instance().mapLayersByName(currentvectorlay)
+            fn_vec = vlayers[0]
+            # ttt = (tempfile.NamedTemporaryFile(suffix='.shp'))
+            # output = str(self.dlg.lineEditV_R.text())
+            # output = str(self.dlg.mQfwRasterized.filePath())
+            SplittingSize = int(self.dlg.comboBoxImgSize.currentText()) # $$$$$$$$$$$$$$$$$$$$$
+            # SplittingSize = self.dlg.label.setText(str(index_SplittingSize))
 
-                    # Log for files
-                    ras_path = str(fn_ras.dataProvider().dataSourceUri())
-                    vec_path = str(fn_vec.dataProvider().dataSourceUri())
+            # Log for files
+            ras_path = str(fn_ras.dataProvider().dataSourceUri())
+            vec_path = str(fn_vec.dataProvider().dataSourceUri())
+            dataset_path = str(self.dlg.mQfwDataset.filePath())
+            def mkdir_p(path):
+                if not osp.exists(path):
+                    os.makedirs(path)
+            # PaddlePaddle Dataset Paths
+            dataset_paddle = osp.join(dataset_path, "PaddlePaddle")
+            mkdir_p(dataset_paddle)
 
-                    feedback = QgsProcessingFeedback()
-                    feedback.pushInfo(ras_path)
-                    feedback.pushInfo(vec_path)
-                    feedback.pushInfo(output)
-                    feedback.pushInfo(str(SplittingSize))
+            Ras_Paddle_path = osp.join(dataset_paddle, "rasterized/")
+            output = osp.join(Ras_Paddle_path,currentrasterlay + '_rasterized' +'.tif') ## Output Rasterized File
+            image_Paddle_path = osp.join(dataset_paddle, "image/")
+            label_Paddle_path = osp.join(dataset_paddle, "label/")
+            InSeg_Paddle_path = osp.join(dataset_paddle, "inseg/")
+            mkdir_p(Ras_Paddle_path)
+            mkdir_p(image_Paddle_path)
+            mkdir_p(label_Paddle_path)
+            mkdir_p(InSeg_Paddle_path)
 
-                    # import os.path as ops
-                    # print(ops.exists(vec_path))
+            feedback = QgsProcessingFeedback()
+            feedback.pushInfo(ras_path)
+            feedback.pushInfo(vec_path)
+            feedback.pushInfo(output)
+            feedback.pushInfo(str(SplittingSize))
 
-                    # iface.messageBar().pushMessage(output, level=Qgis.Critical)
-                    # TODO: if shp in memory, it can't work
-                    
-                    rasterize(ras_path, vec_path, output)
-                    iface.messageBar().pushMessage("You will find the rasterized file in " + output, level=Qgis.Info, duration=5)
-                    iface.addRasterLayer(output, "deepbands-datasets")
+            # import os.path as ops
+            # print(ops.exists(vec_path))
 
-                    # feedback.pushInfo(str(fn_ras.dataProvider().dataSourceUri()))
-                    # feedback.pushInfo(str(fn_vec.dataProvider().dataSourceUri()))
-                    # do it 
-                    # image_folder_path = str(self.dlg.lineEditImages.text())
-                    # label_folder_path = str(self.dlg.lineEditLabels.text())
-                    image_folder_path = str(self.dlg.mQfwImages.filePath())
-                    label_folder_path = str(self.dlg.mQfwLabels.filePath())
-                    fn_ras_path = fn_ras.dataProvider().dataSourceUri()
-                    splitting(fn_ras_path, image_folder_path, "jpg", "JPEG", "", SplittingSize, SplittingSize, currentrasterlay)
-                    splitting(output, label_folder_path, "png", "PNG", "", SplittingSize, SplittingSize, currentrasterlay) #should be the same name of image. vector name if needed-> currentvectorlay
+            # iface.messageBar().pushMessage(output, level=Qgis.Critical)
+            # TODO: if shp in memory, it can't work
+            
+            rasterize(ras_path, vec_path, output)
+            iface.messageBar().pushMessage("You will find the rasterized file in " + output, level=Qgis.Info, duration=5)
+            iface.addRasterLayer(output, "deepbands-datasets")
 
-                    save_path_InSeg = str(self.dlg.mQfwLabels_InSeg.filePath())
-                    # names = os.listdir(label_folder_path)
-                    names = [f for f in os.listdir(label_folder_path) if f.endswith('.png')]
-                    if self.dlg.checkBoxInSeg.isChecked():
-                        for name in names:
-                            label = osp.join(label_folder_path, name)
-                            saver = osp.join(save_path_InSeg, name)
-                            segMaskB2I(label, saver)
-                    else :
-                        feedback.pushInfo("Option instance segmentation is not selected")
+            # feedback.pushInfo(str(fn_ras.dataProvider().dataSourceUri()))
+            # feedback.pushInfo(str(fn_vec.dataProvider().dataSourceUri()))
+            # do it 
+            # image_folder_path = str(self.dlg.lineEditImages.text())
+            # label_folder_path = str(self.dlg.lineEditLabels.text())
+            # image_folder_path = str(self.dlg.mQfwDataset.filePath())
+            # label_folder_path = str(self.dlg.mQfwLabels.filePath())
+            fn_ras_path = fn_ras.dataProvider().dataSourceUri()
+            splitting(fn_ras_path, image_Paddle_path, "jpg", "JPEG", "", SplittingSize, SplittingSize, currentrasterlay)
+            splitting(output, label_Paddle_path, "png", "PNG", "", SplittingSize, SplittingSize, currentrasterlay) #should be the same name of image. vector name if needed-> currentvectorlay
 
-                    if self.dlg.checkBoxPaddle.isChecked():
-                        dataset_path = os.path.dirname(image_folder_path)
-                        Training_Set = self.dlg.mOpacityWidget_Training.opacity()
-                        Val_Set =  self.dlg.mOpacityWidget_Validating.opacity()
-                        Testing_Set = self.dlg.mOpacityWidget_Testing.opacity()
-                        
-                        args = {
-                            "dataset_root": dataset_path,
-                            "images_dir_name": image_folder_path,
-                            "labels_dir_name": label_folder_path,
-                            "split": [Training_Set, Val_Set, Testing_Set],
-                            "label_class": ['__background__', '__foreground__'],
-                            "separator": " ",
-                            "format": ['jpg', 'png'],
-                            "postfix": ['', '']
-                        }
-                        generate_list(args)
+            # save_path_InSeg = str(self.dlg.mQfwLabels_InSeg.filePath())
+            # names = os.listdir(label_Paddle_path)
+            names = [f for f in os.listdir(label_Paddle_path) if f.endswith('.png')]
+            if self.dlg.checkBoxInSeg.isChecked():
+                for name in names:
+                    label = osp.join(label_Paddle_path, name)
+                    saver = osp.join(InSeg_Paddle_path, name)
+                    segMaskB2I(label, saver)
+            else :
+                feedback.pushInfo("Option instance segmentation is not selected")
 
-                    iface.messageBar().pushMessage("You will find the dataset in " + dataset_path, level=Qgis.Success, duration=5)
-            else:
-                    print ('**********************************')
+            if self.dlg.checkBoxPaddle.isChecked():
+                # dataset_path = os.path.dirname(image_Paddle_path)
+                Training_Set = self.dlg.mOpacityWidget_Training.opacity()
+                Val_Set =  self.dlg.mOpacityWidget_Validating.opacity()
+                Testing_Set = self.dlg.mOpacityWidget_Testing.opacity()
+                
+                args = {
+                    "dataset_root": dataset_paddle,
+                    "images_dir_name": image_Paddle_path,
+                    "labels_dir_name": label_Paddle_path,
+                    "split": [Training_Set, Val_Set, Testing_Set],
+                    "label_class": ['__background__', '__foreground__'],
+                    "separator": " ",
+                    "format": ['jpg', 'png'],
+                    "postfix": ['', '']
+                }
+                generate_list(args)
+
+            if self.dlg.checkBoxCOCO.isChecked():
+
+                # COCO Dataset Paths
+                dataset_COCO = osp.join(dataset_path, "COCO")
+                mkdir_p(dataset_COCO)
+                Ras_COCO_path = osp.join(dataset_COCO, "image/")
+                annotations_COCO_path = osp.join(dataset_COCO, "annotations/")
+                train_COCO_path = osp.join(dataset_COCO, "train/")
+                eval_COCO_path = osp.join(dataset_COCO, "eval/")
+                test_COCO_path = osp.join(dataset_COCO, "test/")
+                mkdir_p(Ras_COCO_path)
+                mkdir_p(annotations_COCO_path)
+                mkdir_p(train_COCO_path)
+                mkdir_p(eval_COCO_path)
+                mkdir_p(test_COCO_path)
+                # mkdir_p(InSeg_COCO_path)
+                clip_from_file(SplittingSize, ROOT, fn_ras_path, vec_path)
+                slice(dataset_COCO, train=Training_Set, eval=Val_Set, test=Testing_Set)
+                from_mask_to_coco(dataset_COCO, 'train', "image", "annotations")
+                # from_mask_to_coco(ROOT_DIR, 'eval', "image", "annotations")
+                # from_mask_to_coco(ROOT_DIR, 'test', "image", "annotations")
+
+            iface.messageBar().pushMessage("You will find the dataset in " + dataset_path, level=Qgis.Success, duration=5)

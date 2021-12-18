@@ -6,7 +6,7 @@ import pylab
 import os
 
 ROOT_DIR = r'./example_data/original_data/dataset/eval'
-image_directory = os.path.join(ROOT_DIR, "greenhouse_2019")
+image_directory = os.path.join(ROOT_DIR, "image")
 annotation_file = os.path.join(ROOT_DIR, "instances_greenhouse_eval2019.json")
 
 example_coco = COCO(annotation_file)

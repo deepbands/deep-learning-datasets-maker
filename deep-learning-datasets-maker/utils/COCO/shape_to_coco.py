@@ -6,9 +6,9 @@ import re
 import fnmatch
 from PIL import Image
 import numpy as np
-from pycococreatortools import pycococreatortools
-from tif_process import *
-from slice_dataset import slice
+from .pycococreatortools import *
+from .tif_process import *
+from .slice_dataset import slice
 
 # root path for saving the tif and shp file.
 ROOT = r'./example_data/original_data'
@@ -16,7 +16,7 @@ img_path = 'img'
 shp_path = 'shp'
 # root path for saving the mask.
 ROOT_DIR = ROOT + '/dataset'
-IMAGE_DIR = os.path.join(ROOT_DIR, "greenhouse_2019")
+IMAGE_DIR = os.path.join(ROOT_DIR, "image")
 ANNOTATION_DIR = os.path.join(ROOT_DIR, "annotations")
 
 clip_size = 512
@@ -125,12 +125,12 @@ def from_mask_to_coco(root, MARK, IMAGE, ANNOTATION):
     else:
         print(ROOT_DIR + ' does not exit!')
 
-def main():
+# def main():
     clip_from_file(clip_size, ROOT, img_path, shp_path)
     slice(ROOT_DIR, train=0.6, eval=0.2, test=0.2)
-    from_mask_to_coco(ROOT_DIR, 'train', "greenhouse_2019", "annotations")
-    from_mask_to_coco(ROOT_DIR, 'eval', "greenhouse_2019", "annotations")
-    from_mask_to_coco(ROOT_DIR, 'test', "greenhouse_2019", "annotations")
+    from_mask_to_coco(ROOT_DIR, 'train', "image", "annotations")
+    from_mask_to_coco(ROOT_DIR, 'eval', "image", "annotations")
+    from_mask_to_coco(ROOT_DIR, 'test', "image", "annotations")
 
-if __name__ == "__main__":
-    main()
+# if __name__ == "__main__":
+#     main()

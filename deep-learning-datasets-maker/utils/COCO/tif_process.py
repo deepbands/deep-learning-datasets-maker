@@ -260,7 +260,7 @@ class GeoTiff(object):
     def clip_tif_and_shapefile(self, clip_size, begin_id, shapefile_path, out_dir):
         self.mask_tif_with_shapefile(shapefile_path)
         self.clip_mask_with_grid(clip_size=clip_size, begin_id=begin_id, out_dir=out_dir + '/annotations')
-        pic_id = self.clip_tif_with_grid(clip_size=clip_size, begin_id=begin_id, out_dir=out_dir + '/greenhouse_2019')
+        pic_id = self.clip_tif_with_grid(clip_size=clip_size, begin_id=begin_id, out_dir=out_dir + '/image')
         return pic_id
 
 def channel_first_to_last(image):
@@ -383,8 +383,8 @@ def clip_from_file(clip_size, root, img_path, shp_path):
         pic_num = tif.clip_tif_and_shapefile(clip_size, pic_id, root + '/' + shp_path + '/' + img_id + '/' + img_id + '.shp', root + '/dataset')
         pic_id += pic_num
 
-if __name__ == '__main__':
-    root = r'./example_data/original_data'
-    img_path = 'img'
-    shp_path = 'shp'
-    clip_from_file(512, root, img_path, shp_path)
+# if __name__ == '__main__':
+#     root = r'./example_data/original_data'
+#     img_path = 'img'
+#     shp_path = 'shp'
+#     clip_from_file(512, root, img_path, shp_path)

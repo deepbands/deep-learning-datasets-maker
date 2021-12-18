@@ -5,7 +5,7 @@ import re
 import fnmatch
 
 ann_path = 'annotations'
-img_path = 'greenhouse_2019'
+img_path = 'image'
 
 def filter_for_annotations(root, files, image_filename):
     # file_types = ['*.png']
