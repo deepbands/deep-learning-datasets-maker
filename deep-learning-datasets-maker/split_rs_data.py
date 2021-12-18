@@ -25,18 +25,27 @@ from numpy import double
 from qgis.PyQt.QtCore import QSettings, QTranslator, QCoreApplication
 from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtWidgets import QAction, QFileDialog, QTabWidget
-from qgis.core import (QgsMapLayerProxyModel, QgsProject, QgsProcessingFeedback, QgsMessageLog, Qgis)
+from qgis.core import (
+    QgsMapLayerProxyModel,
+    QgsProject,
+    QgsProcessingFeedback,
+    QgsMessageLog,
+    Qgis,
+)
 from qgis.utils import iface
+
 # import processing, tempfile
 
 # Initialize Qt resources from file resources.py
 from .resources import *
+
 # Import the code for the dialog
 from .split_rs_data_dialog import SplitRSDataDialog
 import os
 import os.path as osp
 from .utils import *
 from .utils.COCO import *
+
 # import argparse
 
 
@@ -56,11 +65,10 @@ class SplitRSData:
         # initialize plugin directory
         self.plugin_dir = os.path.dirname(__file__)
         # initialize locale
-        locale = QSettings().value('locale/userLocale')[0:2]
+        locale = QSettings().value("locale/userLocale")[0:2]
         locale_path = os.path.join(
-            self.plugin_dir,
-            'i18n',
-            'SplitRSData_{}.qm'.format(locale))
+            self.plugin_dir, "i18n", "SplitRSData_{}.qm".format(locale)
+        )
 
         if os.path.exists(locale_path):
             self.translator = QTranslator()
@@ -69,11 +77,12 @@ class SplitRSData:
 
         # Declare instance attributes
         self.actions = []
-        self.menu = self.tr(u'&Deep Learning Datasets Maker')
+        self.menu = self.tr(u"&Deep Learning Datasets Maker")
 
         # Check if plugin was started the first time in current QGIS session
         # Must be set in initGui() to survive plugin reloads
         self.first_start = None
+
     # noinspection PyMethodMayBeStatic
     def tr(self, message):
         """Get the translation for a string using Qt translation API.
@@ -87,8 +96,7 @@ class SplitRSData:
         :rtype: QString
         """
         # noinspection PyTypeChecker,PyArgumentList,PyCallByClass
-        return QCoreApplication.translate('SplitRSData', message)
-
+        return QCoreApplication.translate("SplitRSData", message)
 
     def add_action(
         self,
@@ -100,7 +108,8 @@ class SplitRSData:
         add_to_toolbar=True,
         status_tip=None,
         whats_this=None,
-        parent=None):
+        parent=None,
+    ):
         """Add a toolbar icon to the toolbar.
 
         :param icon_path: Path to the icon for this action. Can be a resource
@@ -156,9 +165,7 @@ class SplitRSData:
             self.iface.addToolBarIcon(action)
 
         if add_to_menu:
-            self.iface.addPluginToMenu(
-                self.menu,
-                action)
+            self.iface.addPluginToMenu(self.menu, action)
 
         self.actions.append(action)
 
@@ -167,12 +174,13 @@ class SplitRSData:
     def initGui(self):
         """Create the menu entries and toolbar icons inside the QGIS GUI."""
 
-        icon_path = ':/plugins/split_rs_data/icon.png'
+        icon_path = ":/plugins/split_rs_data/icon.png"
         self.add_action(
             icon_path,
-            text=self.tr(u'Deep Learning Datasets Maker'),
+            text=self.tr(u"Deep Learning Datasets Maker"),
             callback=self.run,
-            parent=self.iface.mainWindow())
+            parent=self.iface.mainWindow(),
+        )
 
         # will be set False in run()
         self.first_start = True
@@ -181,48 +189,47 @@ class SplitRSData:
         """Removes the plugin menu item and icon from QGIS GUI."""
         for action in self.actions:
             self.iface.removePluginMenu(
-                self.tr(u'&Deep Learning Datasets Maker'),
-                action)
+                self.tr(u"&Deep Learning Datasets Maker"), action
+            )
             self.iface.removeToolBarIcon(action)
 
     def state_changed(self, state):
-            """ Set the visibility of mQfwLabels_InSeg
+        """Set the visibility of mQfwLabels_InSeg
 
-            Args:
-                state (int): Output the current status of three check boxes:
-                           0 selected
-                           1 half selected 
-                           2 unchecked
-            """
-            # if state == 2:
-                # self.dlg.mQfwLabels_InSeg.setEnabled(True)  # We also can use .setHidden(False)
-                # self.dlg.label_7.setEnabled(True)
-            # else : 
-                # self.dlg.mQfwLabels_InSeg.setEnabled(False)
-                # self.dlg.label_7.setEnabled(False)
+        Args:
+            state (int): Output the current status of three check boxes:
+                       0 selected
+                       1 half selected
+                       2 unchecked
+        """
+        # if state == 2:
+        # self.dlg.mQfwLabels_InSeg.setEnabled(True)  # We also can use .setHidden(False)
+        # self.dlg.label_7.setEnabled(True)
+        # else :
+        # self.dlg.mQfwLabels_InSeg.setEnabled(False)
+        # self.dlg.label_7.setEnabled(False)
 
     def state_changed_paddle(self, state):
-            if state == 2:
-                self.dlg.mOpacityWidget_Training.setEnabled(True)
-                self.dlg.mOpacityWidget_Validating.setEnabled(True)
-                self.dlg.label_8.setEnabled(True)
-                self.dlg.label_9.setEnabled(True)
-                self.dlg.label_10.setEnabled(True)
-            else :
-                self.dlg.mOpacityWidget_Training.setEnabled(False)
-                self.dlg.mOpacityWidget_Validating.setEnabled(False)
-                self.dlg.label_8.setEnabled(False)
-                self.dlg.label_9.setEnabled(False)
-                self.dlg.label_10.setEnabled(False)
-    
-    def state_changed_training(self, state):
-            Training_Set = self.dlg.mOpacityWidget_Training.opacity()
-            Val_Set =  self.dlg.mOpacityWidget_Validating.opacity()
-            Testing_Set = self.dlg.mOpacityWidget_Testing.opacity()
-            if Testing_Set == 0:
-                self.dlg.mOpacityWidget_Validating.setOpacity(1.0 - Training_Set)
-            self.dlg.mOpacityWidget_Testing.setOpacity(1.0 - (Training_Set+Val_Set))
+        if state == 2:
+            self.dlg.mOpacityWidget_Training.setEnabled(True)
+            self.dlg.mOpacityWidget_Validating.setEnabled(True)
+            self.dlg.label_8.setEnabled(True)
+            self.dlg.label_9.setEnabled(True)
+            self.dlg.label_10.setEnabled(True)
+        else:
+            self.dlg.mOpacityWidget_Training.setEnabled(False)
+            self.dlg.mOpacityWidget_Validating.setEnabled(False)
+            self.dlg.label_8.setEnabled(False)
+            self.dlg.label_9.setEnabled(False)
+            self.dlg.label_10.setEnabled(False)
 
+    def state_changed_training(self, state):
+        Training_Set = self.dlg.mOpacityWidget_Training.opacity()
+        Val_Set = self.dlg.mOpacityWidget_Validating.opacity()
+        Testing_Set = self.dlg.mOpacityWidget_Testing.opacity()
+        if Testing_Set == 0:
+            self.dlg.mOpacityWidget_Validating.setOpacity(1.0 - Training_Set)
+        self.dlg.mOpacityWidget_Testing.setOpacity(1.0 - (Training_Set + Val_Set))
 
     def run(self):
         """Run method that performs all the real work"""
@@ -232,7 +239,7 @@ class SplitRSData:
         if self.first_start == True:
             self.first_start = False
             self.dlg = SplitRSDataDialog()
-        
+
         # Fetch the currently loaded layers
         self.dlg.mQfwDataset.setDialogTitle("Select Output Images Files")
         self.dlg.mMapLayerComboBoxR.setFilters(QgsMapLayerProxyModel.RasterLayer)
@@ -244,8 +251,12 @@ class SplitRSData:
         self.dlg.checkBoxPaddle.setChecked(True)
         self.dlg.checkBoxInSeg.stateChanged.connect(self.state_changed)
         self.dlg.checkBoxPaddle.stateChanged.connect(self.state_changed_paddle)
-        self.dlg.mOpacityWidget_Training.opacityChanged.connect(self.state_changed_training)
-        self.dlg.mOpacityWidget_Validating.opacityChanged.connect(self.state_changed_training)
+        self.dlg.mOpacityWidget_Training.opacityChanged.connect(
+            self.state_changed_training
+        )
+        self.dlg.mOpacityWidget_Validating.opacityChanged.connect(
+            self.state_changed_training
+        )
 
         # show the dialog
         self.dlg.show()
@@ -253,10 +264,14 @@ class SplitRSData:
         result = self.dlg.exec_()
         # See if OK was pressed
         if result:
-            currentrasterlay = self.dlg.mMapLayerComboBoxR.currentText()  # Get the selected raster layer
+            currentrasterlay = (
+                self.dlg.mMapLayerComboBoxR.currentText()
+            )  # Get the selected raster layer
             rlayers = QgsProject.instance().mapLayersByName(currentrasterlay)
             fn_ras = rlayers[0]
-            currentvectorlay = self.dlg.mMapLayerComboBoxV.currentText()  # Get the selected raster layer
+            currentvectorlay = (
+                self.dlg.mMapLayerComboBoxV.currentText()
+            )  # Get the selected raster layer
             vlayers = QgsProject.instance().mapLayersByName(currentvectorlay)
             fn_vec = vlayers[0]
             SplittingSize = int(self.dlg.comboBoxImgSize.currentText())
@@ -265,15 +280,19 @@ class SplitRSData:
             ras_path = str(fn_ras.dataProvider().dataSourceUri())
             vec_path = str(fn_vec.dataProvider().dataSourceUri())
             dataset_path = str(self.dlg.mQfwDataset.filePath())
+
             def mkdir_p(path):
                 if not osp.exists(path):
                     os.makedirs(path)
+
             # PaddlePaddle Dataset Paths
             dataset_paddle = osp.join(dataset_path, "PaddlePaddle")
             mkdir_p(dataset_paddle)
 
             Ras_Paddle_path = osp.join(dataset_paddle, "rasterized/")
-            output = osp.join(Ras_Paddle_path,currentrasterlay + '_rasterized' +'.tif') ## Output Rasterized File
+            output = osp.join(
+                Ras_Paddle_path, currentrasterlay + "_rasterized" + ".tif"
+            )  ## Output Rasterized File
             image_Paddle_path = osp.join(dataset_paddle, "image/")
             label_Paddle_path = osp.join(dataset_paddle, "label/")
             InSeg_Paddle_path = osp.join(dataset_paddle, "inseg/")
@@ -283,47 +302,69 @@ class SplitRSData:
             mkdir_p(InSeg_Paddle_path)
 
             feedback = QgsProcessingFeedback()
-            feedback.pushInfo('Raster Path', ras_path)
-            feedback.pushInfo('Vector Path', vec_path)
-            feedback.pushInfo('Output Rasterized Path', output)
-            feedback.pushInfo('Imge Splitting Size',str(SplittingSize))
+            feedback.pushInfo("Raster Path", ras_path)
+            feedback.pushInfo("Vector Path", vec_path)
+            feedback.pushInfo("Output Rasterized Path", output)
+            feedback.pushInfo("Imge Splitting Size", str(SplittingSize))
 
             # TODO: if shp in memory, it can't work
-            
+
             rasterize(ras_path, vec_path, output)
-            iface.messageBar().pushMessage("You will find the rasterized file in " + output, level=Qgis.Info, duration=5)
+            iface.messageBar().pushMessage(
+                "You will find the rasterized file in " + output,
+                level=Qgis.Info,
+                duration=5,
+            )
             iface.addRasterLayer(output, "deepbands-datasets")
 
             fn_ras_path = fn_ras.dataProvider().dataSourceUri()
-            splitting(fn_ras_path, image_Paddle_path, "jpg", "JPEG", "", SplittingSize, SplittingSize, currentrasterlay)
-            splitting(output, label_Paddle_path, "png", "PNG", "", SplittingSize, SplittingSize, currentrasterlay) #should be the same name of image. vector name if needed-> currentvectorlay
+            splitting(
+                fn_ras_path,
+                image_Paddle_path,
+                "jpg",
+                "JPEG",
+                "",
+                SplittingSize,
+                SplittingSize,
+                currentrasterlay,
+            )
+            splitting(
+                output,
+                label_Paddle_path,
+                "png",
+                "PNG",
+                "",
+                SplittingSize,
+                SplittingSize,
+                currentrasterlay,
+            )  # should be the same name of image. vector name if needed-> currentvectorlay
 
             # save_path_InSeg = str(self.dlg.mQfwLabels_InSeg.filePath())
             # names = os.listdir(label_Paddle_path)
-            names = [f for f in os.listdir(label_Paddle_path) if f.endswith('.png')]
+            names = [f for f in os.listdir(label_Paddle_path) if f.endswith(".png")]
             if self.dlg.checkBoxInSeg.isChecked():
                 for name in names:
                     label = osp.join(label_Paddle_path, name)
                     saver = osp.join(InSeg_Paddle_path, name)
                     segMaskB2I(label, saver)
-            else :
+            else:
                 feedback.pushInfo("Option instance segmentation is not selected")
 
             if self.dlg.checkBoxPaddle.isChecked():
                 # dataset_path = os.path.dirname(image_Paddle_path)
                 Training_Set = self.dlg.mOpacityWidget_Training.opacity()
-                Val_Set =  self.dlg.mOpacityWidget_Validating.opacity()
+                Val_Set = self.dlg.mOpacityWidget_Validating.opacity()
                 Testing_Set = self.dlg.mOpacityWidget_Testing.opacity()
-                
+
                 args = {
                     "dataset_root": dataset_paddle,
                     "images_dir_name": image_Paddle_path,
                     "labels_dir_name": label_Paddle_path,
                     "split": [Training_Set, Val_Set, Testing_Set],
-                    "label_class": ['__background__', '__foreground__'],
+                    "label_class": ["__background__", "__foreground__"],
                     "separator": " ",
-                    "format": ['jpg', 'png'],
-                    "postfix": ['', '']
+                    "format": ["jpg", "png"],
+                    "postfix": ["", ""],
                 }
                 generate_list(args)
 
@@ -346,8 +387,12 @@ class SplitRSData:
 
                 clip_from_file(SplittingSize, ROOT, fn_ras_path, vec_path)
                 slice(dataset_COCO, train=Training_Set, eval=Val_Set, test=Testing_Set)
-                from_mask_to_coco(dataset_COCO, 'train', "image", "annotations")
+                from_mask_to_coco(dataset_COCO, "train", "image", "annotations")
                 # from_mask_to_coco(ROOT_DIR, 'eval', "image", "annotations")
                 # from_mask_to_coco(ROOT_DIR, 'test', "image", "annotations")
 
-            iface.messageBar().pushMessage("You will find the dataset in " + dataset_path, level=Qgis.Success, duration=5)
+            iface.messageBar().pushMessage(
+                "You will find the dataset in " + dataset_path,
+                level=Qgis.Success,
+                duration=5,
+            )
