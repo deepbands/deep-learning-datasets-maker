@@ -305,10 +305,10 @@ class SplitRSData:
             mkdir_p(InSeg_Paddle_path)
 
             feedback = QgsProcessingFeedback()
-            feedback.pushInfo("Raster Path" + ras_path)
-            feedback.pushInfo("Vector Path" + vec_path)
-            feedback.pushInfo("Output Rasterized Path" + output)
-            feedback.pushInfo("Imge Splitting Size" + str(SplittingSize))
+            feedback.pushInfo("Raster Path : " + ras_path)
+            feedback.pushInfo("Vector Path : " + vec_path)
+            feedback.pushInfo("Output Rasterized Path : " + output)
+            feedback.pushInfo("Imge Splitting Size : " + str(SplittingSize))
 
             # TODO: if shp in memory, it can't work
 
@@ -360,6 +360,11 @@ class SplitRSData:
                 Training_Set = self.dlg.mOpacityWidget_Training.opacity()
                 Val_Set = self.dlg.mOpacityWidget_Validating.opacity()
                 Testing_Set = self.dlg.mOpacityWidget_Testing.opacity()
+
+                feedback.pushInfo(str(Training_Set+Val_Set+Testing_Set))
+                feedback.pushInfo(str(Training_Set))
+                feedback.pushInfo(str(Val_Set))
+                feedback.pushInfo(str(Testing_Set))
 
                 args = {
                     "dataset_root": dataset_paddle,

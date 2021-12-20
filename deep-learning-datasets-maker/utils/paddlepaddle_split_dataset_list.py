@@ -19,9 +19,8 @@ import os.path
 import warnings
 import numpy as np
 
-
-
 # TODO:  assign command line argument to variable
+
 
 def get_files(path, format, postfix):
     pattern = '*%s.%s' % (postfix, format)
@@ -42,8 +41,8 @@ def get_files(path, format, postfix):
 def generate_list(args):
     separator = args["separator"]
     dataset_root = args["dataset_root"]
-    if sum(args["split"]) != 1.0:
-        raise ValueError("划分比例之和必须为1")
+    # if sum(args["split"]) != 1.0:
+    # raise ValueError("The sum of the division ratios must be 1")
 
     file_list = os.path.join(dataset_root, 'labels.txt')
     with open(file_list, "w") as f:
