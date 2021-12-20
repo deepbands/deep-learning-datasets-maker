@@ -229,7 +229,8 @@ class SplitRSData:
         Testing_Set = self.dlg.mOpacityWidget_Testing.opacity()
         if Testing_Set == 0:
             self.dlg.mOpacityWidget_Validating.setOpacity(1.0 - Training_Set)
-        self.dlg.mOpacityWidget_Testing.setOpacity(1.0 - (Training_Set + Val_Set))
+        self.dlg.mOpacityWidget_Testing.setOpacity(
+            1.0 - (Training_Set + Val_Set))
 
     def run(self):
         """Run method that performs all the real work"""
@@ -242,8 +243,10 @@ class SplitRSData:
 
         # Fetch the currently loaded layers
         self.dlg.mQfwDataset.setDialogTitle("Select Output Images Files")
-        self.dlg.mMapLayerComboBoxR.setFilters(QgsMapLayerProxyModel.RasterLayer)
-        self.dlg.mMapLayerComboBoxV.setFilters(QgsMapLayerProxyModel.PolygonLayer)
+        self.dlg.mMapLayerComboBoxR.setFilters(
+            QgsMapLayerProxyModel.RasterLayer)
+        self.dlg.mMapLayerComboBoxV.setFilters(
+            QgsMapLayerProxyModel.PolygonLayer)
         self.dlg.comboBoxImgSize.clear()
         self.dlg.comboBoxImgSize.addItems(["64", "128", "256", "512", "1024"])
         self.dlg.comboBoxImgSize.setCurrentIndex(3)
@@ -292,7 +295,7 @@ class SplitRSData:
             Ras_Paddle_path = osp.join(dataset_paddle, "rasterized/")
             output = osp.join(
                 Ras_Paddle_path, currentrasterlay + "_rasterized" + ".tif"
-            )  ## Output Rasterized File
+            )  # Output Rasterized File
             image_Paddle_path = osp.join(dataset_paddle, "image/")
             label_Paddle_path = osp.join(dataset_paddle, "label/")
             InSeg_Paddle_path = osp.join(dataset_paddle, "inseg/")
@@ -302,10 +305,10 @@ class SplitRSData:
             mkdir_p(InSeg_Paddle_path)
 
             feedback = QgsProcessingFeedback()
-            feedback.pushInfo("Raster Path", ras_path)
-            feedback.pushInfo("Vector Path", vec_path)
-            feedback.pushInfo("Output Rasterized Path", output)
-            feedback.pushInfo("Imge Splitting Size", str(SplittingSize))
+            feedback.pushInfo("Raster Path" + ras_path)
+            feedback.pushInfo("Vector Path" + vec_path)
+            feedback.pushInfo("Output Rasterized Path" + output)
+            feedback.pushInfo("Imge Splitting Size" + str(SplittingSize))
 
             # TODO: if shp in memory, it can't work
 
@@ -341,14 +344,16 @@ class SplitRSData:
 
             # save_path_InSeg = str(self.dlg.mQfwLabels_InSeg.filePath())
             # names = os.listdir(label_Paddle_path)
-            names = [f for f in os.listdir(label_Paddle_path) if f.endswith(".png")]
+            names = [f for f in os.listdir(
+                label_Paddle_path) if f.endswith(".png")]
             if self.dlg.checkBoxInSeg.isChecked():
                 for name in names:
                     label = osp.join(label_Paddle_path, name)
                     saver = osp.join(InSeg_Paddle_path, name)
                     segMaskB2I(label, saver)
             else:
-                feedback.pushInfo("Option instance segmentation is not selected")
+                feedback.pushInfo(
+                    "Option instance segmentation is not selected")
 
             if self.dlg.checkBoxPaddle.isChecked():
                 # dataset_path = os.path.dirname(image_Paddle_path)
@@ -385,9 +390,18 @@ class SplitRSData:
                 mkdir_p(eval_COCO_path)
                 mkdir_p(test_COCO_path)
 
-                clip_from_file(SplittingSize, ROOT, fn_ras_path, vec_path)
-                slice(dataset_COCO, train=Training_Set, eval=Val_Set, test=Testing_Set)
-                from_mask_to_coco(dataset_COCO, "train", "image", "annotations")
+                # img_path = "/".join(ras_path.split("/")[:-1])
+                # shp_path = "/".join(vec_path.split("/")[:-1])
+                img_path = ras_path
+                shp_path = vec_path
+
+                # root_path_test = ""
+                clip_from_file(SplittingSize, dataset_COCO,
+                               img_path, shp_path)
+                slice(dataset_COCO, train=Training_Set,
+                      eval=Val_Set, test=Testing_Set)
+                from_mask_to_coco(dataset_COCO, "train",
+                                  "image", "annotations")
                 # from_mask_to_coco(ROOT_DIR, 'eval', "image", "annotations")
                 # from_mask_to_coco(ROOT_DIR, 'test', "image", "annotations")
 
