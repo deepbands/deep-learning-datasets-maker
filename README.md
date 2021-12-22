@@ -47,6 +47,6 @@ git clone git@github.com:deepbands/deep-learning-datasets-maker.git
 - [X] Converted semantic segmentation (0 and 1) to instance segmentation for labels (the original label is 0/255) option, and the result is a single-channel image that uses a palette to color. ![](https://s3.bmp.ovh/imgs/2021/09/008c5b768b7e477a.png)
 - [X] PaddlePaddle Train/Val/Testing list text.
 - [ ] Use GDAL for instance segmentation instead of openCV.
-- [ ] Support COCO format.
+- [X] Support COCO format.
 - [X] Update plugin's UI : 
   - [X] Add new checkbox for other annotations like COCO.
