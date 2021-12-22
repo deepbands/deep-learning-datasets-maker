@@ -105,7 +105,7 @@ def generate_list(args):
                 except:
                     line = left + '\n'
 
-                f.write(line)
+                f.write(line.replace("\\", "/"))
                 # print(line)  # test
             start = end
 

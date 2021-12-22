@@ -21,7 +21,6 @@
  *                                                                         *
  ***************************************************************************/
 """
-from numpy import double
 from qgis.PyQt.QtCore import QSettings, QTranslator, QCoreApplication
 from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtWidgets import QAction, QFileDialog, QTabWidget
@@ -44,7 +43,7 @@ from .split_rs_data_dialog import SplitRSDataDialog
 import os
 import os.path as osp
 from .utils import *
-from .utils.COCO import *
+from .utils.COCO import clip_from_file, slice, from_mask_to_coco
 
 # import argparse
 
@@ -379,36 +378,21 @@ class SplitRSData:
                 generate_list(args)
 
             if self.dlg.checkBoxCOCO.isChecked():
-
                 # COCO Dataset Paths
                 dataset_COCO = osp.join(dataset_path, "COCO")
                 mkdir_p(dataset_COCO)
                 Ras_COCO_path = osp.join(dataset_COCO, "image/")
                 annotations_COCO_path = osp.join(dataset_COCO, "annotations/")
-                train_COCO_path = osp.join(dataset_COCO, "train/")
-                eval_COCO_path = osp.join(dataset_COCO, "eval/")
-                test_COCO_path = osp.join(dataset_COCO, "test/")
-
                 mkdir_p(Ras_COCO_path)
                 mkdir_p(annotations_COCO_path)
-                mkdir_p(train_COCO_path)
-                mkdir_p(eval_COCO_path)
-                mkdir_p(test_COCO_path)
 
-                # img_path = "/".join(ras_path.split("/")[:-1])
-                # shp_path = "/".join(vec_path.split("/")[:-1])
-                img_path = ras_path
-                shp_path = vec_path
-
-                # root_path_test = ""
-                clip_from_file(SplittingSize, dataset_COCO,
-                               img_path, shp_path)
-                slice(dataset_COCO, train=Training_Set,
-                      eval=Val_Set, test=Testing_Set)
-                from_mask_to_coco(dataset_COCO, "train",
-                                  "image", "annotations")
-                # from_mask_to_coco(ROOT_DIR, 'eval', "image", "annotations")
-                # from_mask_to_coco(ROOT_DIR, 'test', "image", "annotations")
+                # TODO: the cut image is not repeated, 
+                #       and the cut image is used to directly generate coco format
+                clip_from_file(SplittingSize, dataset_COCO, ras_path, vec_path)
+                slice(dataset_COCO, train=Training_Set, eval=Val_Set, test=Testing_Set)
+                from_mask_to_coco(dataset_COCO, 'train', "image", "annotations")
+                from_mask_to_coco(dataset_COCO, 'eval', "image", "annotations")
+                from_mask_to_coco(dataset_COCO, 'test', "image", "annotations")
 
             iface.messageBar().pushMessage(
                 "You will find the dataset in " + dataset_path,
