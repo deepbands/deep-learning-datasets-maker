@@ -68,6 +68,7 @@ class SplitRSData:
         locale_path = os.path.join(
             self.plugin_dir, "i18n", "SplitRSData_{}.qm".format(locale)
         )
+        # print("############################3" + self.plugin_dir)
 
         if os.path.exists(locale_path):
             self.translator = QTranslator()
@@ -76,7 +77,7 @@ class SplitRSData:
 
         # Declare instance attributes
         self.actions = []
-        self.menu = self.tr(u"&Deep Learning Datasets Maker")
+        self.menu = self.tr(u"&deepbands")
 
         # Check if plugin was started the first time in current QGIS session
         # Must be set in initGui() to survive plugin reloads
@@ -249,7 +250,7 @@ class SplitRSData:
         self.dlg.comboBoxImgSize.clear()
         self.dlg.comboBoxImgSize.addItems(["64", "128", "256", "512", "1024"])
         self.dlg.comboBoxImgSize.setCurrentIndex(3)
-        self.dlg.checkBoxInSeg.setChecked(True)
+        self.dlg.checkBoxInSeg.setChecked(False)
         self.dlg.checkBoxPaddle.setChecked(True)
         self.dlg.checkBoxInSeg.stateChanged.connect(self.state_changed)
         self.dlg.checkBoxPaddle.stateChanged.connect(self.state_changed_paddle)
@@ -341,15 +342,50 @@ class SplitRSData:
                 currentrasterlay,
             )  # should be the same name of image. vector name if needed-> currentvectorlay
 
+            # ** Ins Seg with OPENCV **
+
             # save_path_InSeg = str(self.dlg.mQfwLabels_InSeg.filePath())
             # names = os.listdir(label_Paddle_path)
-            names = [f for f in os.listdir(
-                label_Paddle_path) if f.endswith(".png")]
+            # names = [f for f in os.listdir(
+            #     label_Paddle_path) if f.endswith(".png")]
+            # if self.dlg.checkBoxInSeg.isChecked():
+            #     for name in names:
+            #     label = osp.join(label_Paddle_path, name)
+            #     saver = osp.join(InSeg_Paddle_path, name)
+            #     segMaskB2I(label, saver)
+            # else:
+            #     feedback.pushInfo(
+            #         "Option instance segmentation is not selected")
+
+            # ** Ins Seg with GDAL **
+
+            color_text_path = osp.join(
+                self.plugin_dir + "/utils/color.txt")
+            print(color_text_path)
+            outputRasIN = osp.join(
+                Ras_Paddle_path, currentrasterlay + "_1_255_rasterized" + ".tif")
+            InsSegGDALout = osp.join(
+                Ras_Paddle_path, currentrasterlay + "_Ins_Seg_rasterized" + ".tif")
+
             if self.dlg.checkBoxInSeg.isChecked():
-                for name in names:
-                    label = osp.join(label_Paddle_path, name)
-                    saver = osp.join(InSeg_Paddle_path, name)
-                    segMaskB2I(label, saver)
+                # for name in names:
+                # label = osp.join(label_Paddle_path, name)
+                # saver = osp.join(InSeg_Paddle_path, name)
+                # segMaskB2I(label, saver)
+                rasterizeInsSeg(ras_path, vec_path, outputRasIN,
+                                InsSegGDALout, color_text_path)
+                splitting(
+                    InsSegGDALout,
+                    InSeg_Paddle_path,
+                    "png",
+                    "PNG",
+                    "",
+                    SplittingSize,
+                    SplittingSize,
+                    currentrasterlay,
+                )
+                iface.addRasterLayer(
+                    InsSegGDALout, "deepbands-datasets-InsSeg")
             else:
                 feedback.pushInfo(
                     "Option instance segmentation is not selected")
@@ -386,11 +422,13 @@ class SplitRSData:
                 mkdir_p(Ras_COCO_path)
                 mkdir_p(annotations_COCO_path)
 
-                # TODO: the cut image is not repeated, 
+                # TODO: the cut image is not repeated,
                 #       and the cut image is used to directly generate coco format
                 clip_from_file(SplittingSize, dataset_COCO, ras_path, vec_path)
-                slice(dataset_COCO, train=Training_Set, eval=Val_Set, test=Testing_Set)
-                from_mask_to_coco(dataset_COCO, 'train', "image", "annotations")
+                slice(dataset_COCO, train=Training_Set,
+                      eval=Val_Set, test=Testing_Set)
+                from_mask_to_coco(dataset_COCO, 'train',
+                                  "image", "annotations")
                 from_mask_to_coco(dataset_COCO, 'eval', "image", "annotations")
                 from_mask_to_coco(dataset_COCO, 'test', "image", "annotations")
 

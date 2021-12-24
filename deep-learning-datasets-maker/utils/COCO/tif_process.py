@@ -9,13 +9,12 @@ from PIL import Image, ImageDraw
 import os
 import numpy as np
 import glob
-from osgeo import gdalnumeric
-
 try:
-    from osgeo import gdal, ogr
+    from osgeo import gdal, ogr, gdalnumeric
 except ImportError:
     import gdal
     import ogr
+    import gdalnumeric
 
 gdal.UseExceptions()
 
@@ -38,7 +37,8 @@ class GeoTiff(object):
         self.dataset = gdal.Open(tif_path)
         self.bands_count = self.dataset.RasterCount
         # get each band
-        self.bands = [self.dataset.GetRasterBand(i + 1) for i in range(self.bands_count)]
+        self.bands = [self.dataset.GetRasterBand(
+            i + 1) for i in range(self.bands_count)]
         self.col = self.dataset.RasterXSize
         self.row = self.dataset.RasterYSize
         self.geotransform = self.dataset.GetGeoTransform()
@@ -71,7 +71,8 @@ class GeoTiff(object):
             num_row = self.row if end_row is None else (end_row - start_row)
             num_col = self.col if end_col is None else (end_col - start_col)
             # dataset read image array
-            res = self.dataset.ReadAsArray(start_col, start_row, num_col, num_row)
+            res = self.dataset.ReadAsArray(
+                start_col, start_row, num_col, num_row)
             return res
         else:
             raise NotImplementedError('the param should be [a: b, c: d] !')
@@ -103,14 +104,17 @@ class GeoTiff(object):
             for j in range(col_num):
                 # if begin_id+i*col_num+j in self.mark:
                 #     continue
-                clipped_image = np.array(self[i * clip_size: (i + 1) * clip_size, j * clip_size: (j + 1) * clip_size])
+                clipped_image = np.array(
+                    self[i * clip_size: (i + 1) * clip_size, j * clip_size: (j + 1) * clip_size])
                 clipped_image = clipped_image.astype(np.int8)
 
                 try:
-                    save_path = os.path.join(out_dir, '%d.tif' % (begin_id+i*col_num+j))
+                    save_path = os.path.join(
+                        out_dir, '%d.tif' % (begin_id+i*col_num+j))
                     save_image_with_georef(clipped_image, gtiffDriver,
                                            self.dataset, j*clip_size, i*clip_size, save_path)
-                    print('clip successfully! (%d/%d)' % (count, row_num * col_num))
+                    print('clip successfully! (%d/%d)' %
+                          (count, row_num * col_num))
                     count += 1
                 except Exception:
                     raise IOError('clip failed!%d' % count)
@@ -144,7 +148,8 @@ class GeoTiff(object):
         count = 1
         for i in range(row_num):
             for j in range(col_num):
-                clipped_image = np.array(self.mask[0, i * clip_size: (i + 1) * clip_size, j * clip_size: (j + 1) * clip_size])
+                clipped_image = np.array(
+                    self.mask[0, i * clip_size: (i + 1) * clip_size, j * clip_size: (j + 1) * clip_size])
                 ins_list = np.unique(clipped_image)
                 # if len(ins_list) <= 1:
                 #     self.mark.append(begin_id+i*col_num+j)
@@ -155,10 +160,12 @@ class GeoTiff(object):
                     if ins_list[id] > 0:
                         bg_img[np.where(clipped_image == ins_list[id])] = 255
                     try:
-                        save_path = os.path.join(out_dir, '%d_%s_%d.tif' % (begin_id+i*col_num+j, 'image', id))
+                        save_path = os.path.join(out_dir, '%d_%s_%d.tif' % (
+                            begin_id+i*col_num+j, 'image', id))
                         save_image_with_georef(bg_img, gtiffDriver,
                                                self.dataset, j*clip_size, i*clip_size, save_path)
-                        print('clip mask successfully! (%d/%d)' % (count, row_num * col_num))
+                        print('clip mask successfully! (%d/%d)' %
+                              (count, row_num * col_num))
                         count += 1
                     except Exception:
                         raise IOError('clip failed!%d' % count)
@@ -227,7 +234,8 @@ class GeoTiff(object):
                         points.append((px, py))
 
                     for p in points:
-                        origin_pixel_x, origin_pixel_y = self.world2Pixel(p[0], p[1])
+                        origin_pixel_x, origin_pixel_y = self.world2Pixel(
+                            p[0], p[1])
                         # the pixel in new image
                         new_pixel_x, new_pixel_y = origin_pixel_x, origin_pixel_y
                         pixels.append((new_pixel_x, new_pixel_y))
@@ -247,7 +255,8 @@ class GeoTiff(object):
                     points.append((px, py))
 
                 for p in points:
-                    origin_pixel_x, origin_pixel_y = self.world2Pixel(p[0], p[1])
+                    origin_pixel_x, origin_pixel_y = self.world2Pixel(
+                        p[0], p[1])
                     # the pixel in new image
                     new_pixel_x, new_pixel_y = origin_pixel_x, origin_pixel_y
                     pixels.append((new_pixel_x, new_pixel_y))
@@ -265,9 +274,12 @@ class GeoTiff(object):
 
     def clip_tif_and_shapefile(self, clip_size, begin_id, shapefile_path, out_dir):
         self.mask_tif_with_shapefile(shapefile_path)
-        self.clip_mask_with_grid(clip_size=clip_size, begin_id=begin_id, out_dir=out_dir + '/annotations')
-        pic_id = self.clip_tif_with_grid(clip_size=clip_size, begin_id=begin_id, out_dir=out_dir + '/image')
+        self.clip_mask_with_grid(
+            clip_size=clip_size, begin_id=begin_id, out_dir=out_dir + '/annotations')
+        pic_id = self.clip_tif_with_grid(
+            clip_size=clip_size, begin_id=begin_id, out_dir=out_dir + '/image')
         return pic_id
+
 
 def channel_first_to_last(image):
     """
@@ -281,6 +293,7 @@ def channel_first_to_last(image):
     new_image = np.transpose(image, axes=[1, 2, 0])
     return new_image
 
+
 def channel_last_to_first(image):
     """
 
@@ -292,6 +305,7 @@ def channel_last_to_first(image):
     """
     new_image = np.transpose(image, axes=[2, 0, 1])
     return new_image
+
 
 def save_image_with_georef(image, driver, original_ds, offset_x=0, offset_y=0, save_path=None):
     """
@@ -314,12 +328,13 @@ def save_image_with_georef(image, driver, original_ds, offset_x=0, offset_y=0, s
     # write by band
     clip = image.astype(np.int8)
     # write the dataset
-    if len(image.shape)==3:
+    if len(image.shape) == 3:
         for i in range(image.shape[0]):
             ds.GetRasterBand(i + 1).WriteArray(clip[i])
     else:
         ds.GetRasterBand(1).WriteArray(clip)
     del ds
+
 
 def define_ref_predict(tif_dir, mask_dir, save_dir):
     """
@@ -351,7 +366,9 @@ def define_ref_predict(tif_dir, mask_dir, save_dir):
         tif = GeoTiff(tif_list[i])
         mask = np.array(Image.open(mask_list[i]))
         mask = channel_last_to_first(mask)
-        save_image_with_georef(mask, gtiffDriver, tif.dataset, save_path=save_path)
+        save_image_with_georef(
+            mask, gtiffDriver, tif.dataset, save_path=save_path)
+
 
 class GeoShaplefile(object):
     def __init__(self, file_path=""):
@@ -361,6 +378,7 @@ class GeoShaplefile(object):
         self.feature_type = ""
         self.feature_num = 0
         self.open_shapefile()
+
     def open_shapefile(self):
         driver = ogr.GetDriverByName('ESRI Shapefile')
         dataSource = driver.Open(self.file_path, 0)
@@ -389,9 +407,11 @@ class GeoShaplefile(object):
 #         pic_num = tif.clip_tif_and_shapefile(clip_size, pic_id, root + '/' + shp_path + '/' + img_id + '/' + img_id + '.shp', root + '/dataset')
 #         pic_id += pic_num
 
+
 def clip_from_file(clip_size, root, img_path, shp_path):
     tif = GeoTiff(img_path)
     tif.clip_tif_and_shapefile(clip_size, 0, shp_path, root)
+
 
 if __name__ == '__main__':
     root = r'./example_data/original_data'

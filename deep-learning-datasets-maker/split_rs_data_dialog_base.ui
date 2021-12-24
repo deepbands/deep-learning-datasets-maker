@@ -258,10 +258,10 @@
     <item>
      <widget class="QCheckBox" name="checkBoxPaddle">
       <property name="enabled">
-       <bool>true</bool>
+       <bool>false</bool>
       </property>
       <property name="text">
-       <string>PaddlePaddle Spilit Custom Dataset and Generate File List</string>
+       <string>Spilit Custom Dataset and Generate File List</string>
       </property>
      </widget>
     </item>
