@@ -5,15 +5,17 @@ import re
 import datetime
 import numpy as np
 from itertools import groupby
-from skimage import measure
 from PIL import Image
 import subprocess
 try:
     from pycocotools import mask
+    from skimage import measure
 except ImportError:
-    print('pycocotools package not installed. Installing ...')
-    subprocess.check_call(["python", '-m', 'pip', 'install', 'pycocotools'])
+    print('some packages not installed. Installing ...')
+    subprocess.check_call(
+        ["python3", '-m', 'pip', 'install', 'pycocotools', 'scikit-image'])
     from pycocotools import mask
+    from skimage import measure
 
 
 def convert(text): return int(text) if text.isdigit() else text.lower()
