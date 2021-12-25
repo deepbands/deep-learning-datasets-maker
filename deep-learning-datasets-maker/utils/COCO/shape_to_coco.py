@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+
 import datetime
 import json
 import os
@@ -6,9 +7,9 @@ import re
 import fnmatch
 from PIL import Image
 import numpy as np
-from pycococreatortools import pycococreatortools
-from tif_process import *
-from slice_dataset import slice
+from .pycococreatortools import *
+from .tif_process import *
+from .slice_dataset import slice
 
 # root path for saving the tif and shp file.
 ROOT = r'./example_data/original_data'
@@ -16,17 +17,17 @@ img_path = 'img'
 shp_path = 'shp'
 # root path for saving the mask.
 ROOT_DIR = ROOT + '/dataset'
-IMAGE_DIR = os.path.join(ROOT_DIR, "greenhouse_2019")
+IMAGE_DIR = os.path.join(ROOT_DIR, "image")
 ANNOTATION_DIR = os.path.join(ROOT_DIR, "annotations")
 
 clip_size = 512
 
 INFO = {
-    "description": "Greenhouse Dataset",
+    "description": "Image Dataset",
     "url": "",
     "version": "0.1.0",
-    "year": 2019,
-    "contributor": "DuncanChen",
+    "year": 2021,
+    "contributor": "",
     "date_created": datetime.datetime.utcnow().isoformat(' ')
 }
 
@@ -41,7 +42,7 @@ LICENSES = [
 CATEGORIES = [
     {
         'id': 1,
-        'name': 'greenhouse',
+        'name': 'image',
         'supercategory': 'building',
     },
 ]
@@ -91,7 +92,7 @@ def from_mask_to_coco(root, MARK, IMAGE, ANNOTATION):
             # go through each image
             for image_filename in image_files:
                 image = Image.open(image_filename)
-                image_info = pycococreatortools.create_image_info(
+                image_info = create_image_info(
                     image_id, os.path.basename(image_filename), image.size)
                 coco_output["images"].append(image_info)
 
@@ -109,7 +110,7 @@ def from_mask_to_coco(root, MARK, IMAGE, ANNOTATION):
                         binary_mask = np.asarray(Image.open(annotation_filename)
                                                  .convert('1')).astype(np.uint8)
 
-                        annotation_info = pycococreatortools.create_annotation_info(
+                        annotation_info = create_annotation_info(
                             segmentation_id, image_id, category_info, binary_mask,
                             image.size, tolerance=2)
 
@@ -120,7 +121,7 @@ def from_mask_to_coco(root, MARK, IMAGE, ANNOTATION):
 
                 image_id = image_id + 1
 
-        with open('{}/instances_greenhouse_{}2019.json'.format(ROOT_DIR, MARK), 'w') as output_json_file:
+        with open('{}/instances_image_{}2019.json'.format(ROOT_DIR, MARK), 'w') as output_json_file:
             json.dump(coco_output, output_json_file)
     else:
         print(ROOT_DIR + ' does not exit!')
@@ -128,9 +129,9 @@ def from_mask_to_coco(root, MARK, IMAGE, ANNOTATION):
 def main():
     clip_from_file(clip_size, ROOT, img_path, shp_path)
     slice(ROOT_DIR, train=0.6, eval=0.2, test=0.2)
-    from_mask_to_coco(ROOT_DIR, 'train', "greenhouse_2019", "annotations")
-    from_mask_to_coco(ROOT_DIR, 'eval', "greenhouse_2019", "annotations")
-    from_mask_to_coco(ROOT_DIR, 'test', "greenhouse_2019", "annotations")
+    from_mask_to_coco(ROOT_DIR, 'train', "image", "annotations")
+    from_mask_to_coco(ROOT_DIR, 'eval', "image", "annotations")
+    from_mask_to_coco(ROOT_DIR, 'test', "image", "annotations")
 
 if __name__ == "__main__":
     main()

@@ -1,2 +1,4 @@
 __pycache__/
 .qt_for_python/
+.vscode/settings.json
+data/
