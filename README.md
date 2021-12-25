@@ -6,13 +6,15 @@
   </article>
 </div>
 
-[![Python 3.8](https://img.shields.io/badge/python-3.8-red.svg)](https://www.python.org/downloads/release/python-380/) [![QGIS 3.16.13](https://img.shields.io/badge/qgis-3.16.13-green.svg)](https://www.qgis.org/) [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+[![Python 3.8](https://img.shields.io/badge/python-3.8-blue.svg)](https://www.python.org/downloads/release/python-380/) [![QGIS 3.16.13](https://img.shields.io/badge/qgis-3.16.13-green.svg)](https://www.qgis.org/) [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black) ![license](https://img.shields.io/github/license/deepbands/buildseg) ![release](https://img.shields.io/badge/release-v0.2-red.svg)
 
-Deep Learning Datasets Maker is a QGIS plugin to make datasets creation easier for raster and vector data.
+## Deep Learning Datasets Maker is a QGIS plugin to make datasets creation easier for raster and vector data.
 
-![image](https://user-images.githubusercontent.com/13020265/147381344-5f36a3c9-dc9d-42a7-84e6-1f3cfc1b40d0.png)
-![image](https://user-images.githubusercontent.com/13020265/147382279-58546f57-7476-4d69-af9d-0ac71b409a7a.png)
-![image](https://user-images.githubusercontent.com/13020265/147381366-b0ad1f15-c36a-4b9f-99b9-e456b20357fe.png)
+<p align="center">
+  <img src="https://user-images.githubusercontent.com/13020265/147381344-5f36a3c9-dc9d-42a7-84e6-1f3cfc1b40d0.png">
+  <img src="https://user-images.githubusercontent.com/13020265/147382279-58546f57-7476-4d69-af9d-0ac71b409a7a.png">
+  <img src="https://user-images.githubusercontent.com/13020265/147381366-b0ad1f15-c36a-4b9f-99b9-e456b20357fe.png">
+</p>
 
 ## How to use
 
@@ -28,7 +30,7 @@ git clone git@github.com:deepbands/deep-learning-datasets-maker.git
    ```
    - Or open OSGeo4W shell as administrator and enter :
     ``` shell
-    pip install opencv-python --user
+    pip install scikit-image pycocotools --user
     ```
 
 3. Copy folder named deep-learning-datasets-maker in QGIS configuration folder and choose the plugin from plugin manager in QGIS (If not appeared restart QGIS).
@@ -39,7 +41,7 @@ git clone git@github.com:deepbands/deep-learning-datasets-maker.git
 4. Open QGIS, load your raster and vector data then select the output paths for rasterized, images and labels then click `ok`.
 
 ## TODO
-
+**v0.2**
 - [ ] Fix: If vector layer saved in memory not in file, `rasterize` can't work.
 - [x] Splitting raster data into equal pieces with [GDAL](https://github.com/OSGeo/gdal) , https://gdal.org/.
 - [X] Fix: Splitiing Image Size.
@@ -52,3 +54,6 @@ git clone git@github.com:deepbands/deep-learning-datasets-maker.git
 - [X] Support COCO format.
 - [X] Update plugin's UI : 
   - [X] Add new checkbox for other annotations like COCO.
+
+**v0.3**
+- [ ] Fix : raster and vector full path on Linux/macOS (Sometimes cannot gdal/ogr.open from the full path because of forward slash ``/path_to_raster`` and backward slash ``\path_to_raster`` )
