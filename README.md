@@ -10,7 +10,9 @@
 
 Deep Learning Datasets Maker is a QGIS plugin to make datasets creation easier for raster and vector data.
 
-![image](https://user-images.githubusercontent.com/13020265/145733632-cc0d6029-9c51-4b6b-b914-41ad051e8db3.png)
+![image](https://user-images.githubusercontent.com/13020265/147381344-5f36a3c9-dc9d-42a7-84e6-1f3cfc1b40d0.png)
+![image](https://user-images.githubusercontent.com/13020265/147382279-58546f57-7476-4d69-af9d-0ac71b409a7a.png)
+![image](https://user-images.githubusercontent.com/13020265/147381366-b0ad1f15-c36a-4b9f-99b9-e456b20357fe.png)
 
 ## How to use
 
