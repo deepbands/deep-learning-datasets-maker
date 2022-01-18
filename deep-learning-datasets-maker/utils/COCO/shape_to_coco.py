@@ -5,7 +5,13 @@ import json
 import os
 import re
 import fnmatch
-from PIL import Image
+try:
+    from PIL import Image
+except ImportError:
+    print('some packages not installed. Installing ...')
+    subprocess.check_call(
+        ["python3", '-m', 'pip', 'install', 'Pillow'])
+    from PIL import Image
 import numpy as np
 from .pycococreatortools import *
 from .tif_process import *
