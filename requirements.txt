@@ -1,2 +1,4 @@
+Cython
 scikit-image
 pycocotools
+Pillow
