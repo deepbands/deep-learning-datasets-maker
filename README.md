@@ -30,7 +30,7 @@ git clone git@github.com:deepbands/deep-learning-datasets-maker.git
    ```
    - Or open OSGeo4W shell as administrator and enter :
     ``` shell
-    pip install scikit-image pycocotools --user
+    pip install Cython scikit-image Pillow pycocotools --user
     ```
 
 3. Copy folder named deep-learning-datasets-maker in QGIS configuration folder and choose the plugin from plugin manager in QGIS (If not appeared restart QGIS).
