@@ -6,7 +6,7 @@
 name=Deep Learning Datasets Maker
 qgisMinimumVersion=3.0
 description=tools to handle raster and vector data to split it into small pieces equaled in size for machine learning datasets
-version=0.2
+version=0.2.1
 author=deepbands (Youssef Harby and Yizhou Chen)
 email=youssef_harby@yahoo.com
 
@@ -37,7 +37,7 @@ deprecated=False
 # Since QGIS 3.8, a comma separated list of plugins to be installed
 # (or upgraded) can be specified.
 # Check the documentation for more information.
-plugin_dependencies=scikit-image, pycocotools
+plugin_dependencies=Cython, scikit-image, pycocotools, Pillow
 
 Category of the plugin: Raster, Vector, Database or Web
 # category=
