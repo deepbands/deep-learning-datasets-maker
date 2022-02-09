@@ -5,10 +5,10 @@
 # 1. get mask raster with shapefile
 # 2. clip raster and shapefile with grid
 
-from PIL import Image, ImageDraw
 import os
 import numpy as np
 import glob
+from PIL import Image, ImageDraw
 try:
     from osgeo import gdal, ogr, gdalnumeric
 except ImportError:

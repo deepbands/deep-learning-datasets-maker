@@ -2,16 +2,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 import pylab
 import os
-import subprocess
-try:
-    from pycocotools.coco import COCO
-    import skimage.io as io
-except ImportError:
-    print('some packages not installed. Installing ...')
-    subprocess.check_call(
-        ["python3", '-m', 'pip', 'install', 'pycocotools', 'scikit-image'])
-    from pycocotools.coco import COCO
-    import skimage.io as io
+from pycocotools.coco import COCO
+import skimage.io as io
 
 ROOT_DIR = r'./example_data/original_data/dataset/eval'
 image_directory = os.path.join(ROOT_DIR, "image")

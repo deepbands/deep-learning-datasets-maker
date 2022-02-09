@@ -1,22 +1,10 @@
-#!/usr/bin/env python3
-
-import os
 import re
 import datetime
 import numpy as np
 from itertools import groupby
-import subprocess
-try:
-    from pycocotools import mask
-    from skimage import measure
-    from PIL import Image
-except ImportError:
-    print('some packages not installed. Installing ...')
-    subprocess.check_call(
-        ["python3", '-m', 'pip', 'install', 'Cython', 'scikit-image', 'Pillow', 'pycocotools'])
-    from pycocotools import mask
-    from skimage import measure
-    from PIL import Image
+from pycocotools import mask
+from skimage import measure
+from PIL import Image
 
 
 def convert(text): return int(text) if text.isdigit() else text.lower()

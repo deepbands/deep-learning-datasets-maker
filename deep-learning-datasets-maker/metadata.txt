@@ -6,7 +6,7 @@
 name=Deep Learning Datasets Maker
 qgisMinimumVersion=3.0
 description=tools to handle raster and vector data to split it into small pieces equaled in size for machine learning datasets
-version=0.2.1
+version=0.2.2
 author=deepbands (Youssef Harby and Yizhou Chen)
 email=youssef_harby@yahoo.com
 
