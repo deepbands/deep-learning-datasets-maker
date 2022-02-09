@@ -24,3 +24,4 @@ def checkPIP():
     except ImportError:
         subprocess.check_call(
             ["python3", '-m', 'pip', 'install', 'pycocotools'])
+checkPIP()
