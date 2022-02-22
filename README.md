@@ -9,6 +9,10 @@
 [![Python 3.8](https://img.shields.io/badge/python-3.8-blue.svg)](https://www.python.org/downloads/release/python-380/) [![QGIS 3.16.13](https://img.shields.io/badge/qgis-3.16.13-green.svg)](https://www.qgis.org/) [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black) ![license](https://img.shields.io/github/license/deepbands/buildseg) ![release](https://img.shields.io/badge/release-v0.2-red.svg)
 
 ## Deep Learning Datasets Maker is a QGIS plugin to make datasets creation easier for raster and vector data.
+Run [QGIS Desktop App (3.18)](https://qgis.org/en/site/) vi BinderHub! Click the button below to launch a server:
+
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/Youssef-Harby/jupyter-qgis/qgis?urlpath=desktop)
+
 
 <p align="center">
   <img src="https://user-images.githubusercontent.com/13020265/147381344-5f36a3c9-dc9d-42a7-84e6-1f3cfc1b40d0.png">
