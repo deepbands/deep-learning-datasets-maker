@@ -7,10 +7,30 @@ import os.path as osp
 import math
 
 # Start Splitting 
-def splitting(fn_ras, cdpath, frmt_ext, imgfrmat, scaleoptions, needed_out_x, needed_out_y, file_name):
+def splitting(fn_ras, 
+              cdpath, 
+              scaleoptions,
+              needed_out_x, 
+              needed_out_y, 
+              file_name,
+              mode="IMG",
+              standard=True):
     ds = gdal.Open(fn_ras)
     gt = ds.GetGeoTransform()
 
+    options = { "outputType": gdal.GDT_Byte }
+    frmt_ext = osp.splitext(osp.basename(fn_ras))[-1].replace(".", "")
+    if mode == "IMG":
+        if not standard:
+            options["outputType"] = ds.GetRasterBand(1).DataType
+        else:
+            options["format"] = "JPEG"
+            frmt_ext = "jpg"
+    else:
+        if standard:
+            options["format"] = "PNG"
+            frmt_ext = "png"
+    
     # get coordinates of upper left corner
     xmin = gt[0]
     ymax = gt[3]
@@ -48,15 +68,14 @@ def splitting(fn_ras, cdpath, frmt_ext, imgfrmat, scaleoptions, needed_out_x, ne
             # outputBounds = (xmin, ymin, xmax, ymax), dstNodata = -9999)
 
             # or gdal translate to subset the input raster
-            gdal.Translate(osp.join(cdpath,  \
-                                    (str(file_name) + "-" + str(j) + "-" + str(i) + "." + frmt_ext)), 
-                        ds, 
-                        projWin=(abs(xmin), abs(ymax), abs(xmax), abs(ymin)),
-                        xRes=resx, 
-                        yRes=-resy, 
-                        outputType=gdal.gdalconst.GDT_Byte, 
-                        format=imgfrmat, 
-                        scaleParams=[[scaleoptions]])
+            gdal.Translate(
+                osp.join(cdpath, (str(file_name) + "-" + str(j) + "-" + str(i) + "." + frmt_ext)), 
+                ds, 
+                projWin=(abs(xmin), abs(ymax), abs(xmax), abs(ymin)),
+                xRes=resx, 
+                yRes=-resy, 
+                scaleParams=[[scaleoptions]],
+                **options)
 
 # close the open dataset!!!
 ds = None

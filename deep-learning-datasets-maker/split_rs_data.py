@@ -278,6 +278,7 @@ class SplitRSData:
             vlayers = QgsProject.instance().mapLayersByName(currentvectorlay)
             fn_vec = vlayers[0]
             SplittingSize = int(self.dlg.comboBoxImgSize.currentText())
+            standard_output = self.dlg.checkBoxStandard.isChecked()
 
             # Log for files
             ras_path = str(fn_ras.dataProvider().dataSourceUri())
@@ -324,22 +325,22 @@ class SplitRSData:
             splitting(
                 fn_ras_path,
                 image_Paddle_path,
-                "jpg",
-                "JPEG",
                 "",
                 SplittingSize,
                 SplittingSize,
                 currentrasterlay,
+                "IMG",
+                standard_output
             )
             splitting(
                 output,
                 label_Paddle_path,
-                "png",
-                "PNG",
                 "",
                 SplittingSize,
                 SplittingSize,
                 currentrasterlay,
+                "LAB",
+                standard_output
             )  # should be the same name of image. vector name if needed-> currentvectorlay
 
             # ** Ins Seg with OPENCV **
@@ -377,12 +378,12 @@ class SplitRSData:
                 splitting(
                     InsSegGDALout,
                     InSeg_Paddle_path,
-                    "png",
-                    "PNG",
                     "",
                     SplittingSize,
                     SplittingSize,
                     currentrasterlay,
+                    "LAB",
+                    standard_output
                 )
                 iface.addRasterLayer(
                     InsSegGDALout, "deepbands-datasets-InsSeg")
