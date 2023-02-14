@@ -236,7 +236,7 @@
       <bool>true</bool>
      </property>
      <property name="text">
-      <string>Save as U8C3/1</string>
+      <string>Save as U8C3</string>
      </property>
      <property name="checked">
       <bool>true</bool>
